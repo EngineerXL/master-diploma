@@ -1,0 +1,6 @@
+asrl-pyboreas
+matplotlib
+notebook
+numpy
+numpy-quaternion
+plotly
