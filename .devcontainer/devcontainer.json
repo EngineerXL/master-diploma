@@ -8,6 +8,9 @@
     "runArgs": [
         "--net=host"
     ],
+    "mounts": [
+        "source=/mnt/mainyutin's files/datasets/boreas,target=/data/boreas,type=bind,consistency=cached"
+    ],
     "customizations": {
         // Configure properties specific to VS Code.
         "vscode": {
