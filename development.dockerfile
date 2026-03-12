@@ -1,11 +1,16 @@
-FROM ubuntu:22.04
+FROM python:3.12
 
 # Update sources
 RUN apt-get update
 
 # Install Libraries
 RUN apt-get install -y \
-    ffmpeg
+    cmake \
+    ffmpeg \
+    gcc \
+    g++ \
+    libceres-dev \
+    libeigen3-dev
 
 # Install Python and Tools
 RUN apt-get install -y \
@@ -14,8 +19,6 @@ RUN apt-get install -y \
     gdb \
     git \
     make \
-    python3 \
-    python3-pip \
     wget \
     zip
 

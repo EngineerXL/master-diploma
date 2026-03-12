@@ -4,3 +4,5 @@ notebook
 numpy
 numpy-quaternion
 plotly
+pyceres
+scipy>=1.16.0
