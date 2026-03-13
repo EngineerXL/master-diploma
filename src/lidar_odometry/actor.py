@@ -6,10 +6,11 @@ Provides functionality for processing LiDAR point clouds and retrieving current 
 
 import numpy as np
 from .voxelize import voxelize
-from .icp import align_point_clouds
+from .icp import align_point_clouds_icp
 from scipy.spatial.transform import RigidTransform as Tf
 from .icp_kabsch import align_points_geman_mcclure
 from .cloud_processing import remove_distant_points
+
 
 class LidarOdometryActor:
     """
@@ -49,19 +50,27 @@ class LidarOdometryActor:
             self._prev_cloud = processed_points
             self._prev_stamp = timestamp
             return
-            
+
         prev_voxelized = voxelize(self._prev_cloud, self._config["voxel_size"])
         cur_voxelized = voxelize(processed_points, self._config["voxel_size"])
-        if (self._algo == "icp_geman_mcclure"):
+        if self._algo == "icp_geman_mcclure":
             transform, info = align_points_geman_mcclure(
                 cur_voxelized,
                 prev_voxelized,
                 init_transform=self.get_initial_guess(),
                 max_iterations=self._config["icp_max_iterations"],
             )
+        elif self._algo == "icp":
+            transform, info = align_point_clouds_icp(
+                cur_voxelized,
+                prev_voxelized,
+                init_transform=self.get_initial_guess(),
+                max_iterations=self._config["icp_max_iterations"],
+                w_func="geman-mcclure",
+            )
         else:
             raise RuntimeError(f"Unknown algorithm: {self._algo}")
-        self._state = {"icp_info" : info}
+        self._state = {"icp_info": info}
 
         self.save_initial_guess(transform)
         dt = timestamp - self._prev_stamp
