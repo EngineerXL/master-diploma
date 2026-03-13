@@ -67,7 +67,7 @@ def _weighted_kabsch(P: np.ndarray, Q: np.ndarray, w: np.ndarray):
     return Rm, t
 
 
-def icp_geman_mcclure(
+def align_points_geman_mcclure(
     source: np.ndarray,
     target: np.ndarray,
     init_transform=None,
@@ -115,8 +115,8 @@ def icp_geman_mcclure(
     tree = cKDTree(target)
 
     prev_error = np.inf
-    history = []
 
+    iterations = 0
     for it in range(max_iterations):
         src_x = _apply_transform(source, Rm, t)
 
@@ -149,21 +149,11 @@ def icp_geman_mcclure(
         Rm = dR @ Rm
         t = dR @ t + dt
 
+        iterations += 1
+
         # robust objective (mean rho)
         rho = (r * r) / (r * r + c_it * c_it)
         err = float(np.mean(rho))
-
-        if return_history:
-            history.append(
-                {
-                    "iter": it,
-                    "pairs": int(P.shape[0]),
-                    "c": c_it,
-                    "mean_rho": err,
-                    "mean_dist": float(np.mean(r)),
-                    "median_dist": float(np.median(r)),
-                }
-            )
 
         if abs(prev_error - err) < tolerance:
             prev_error = err
@@ -171,16 +161,7 @@ def icp_geman_mcclure(
         prev_error = err
 
     transform = _to_rigid_transform(Rm, t)
-    info = {
-        "iterations": (
-            (history[-1]["iter"] + 1) if (return_history and history) else (it + 1)
-        ),
-        "final_rotation_matrix": Rm,
-        "final_translation": t,
-        "final_mean_rho": prev_error,
-    }
-    if return_history:
-        return transform, info, history
+    info = {"iterations": iterations}
     return transform, info
 
 
@@ -246,7 +227,7 @@ def main():
     T0[:3, :3] = rot0
     T0[:3, 3] = t0
 
-    T_est, info, hist = icp_geman_mcclure(
+    T_est, info, hist = align_points_geman_mcclure(
         source,
         target,
         init_transform=T0,
