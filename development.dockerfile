@@ -9,8 +9,8 @@ RUN apt-get install -y \
     ffmpeg \
     gcc \
     g++ \
-    libceres-dev \
-    libeigen3-dev
+    libeigen3-dev \
+    libopenblas-dev
 
 # Install Python and Tools
 RUN apt-get install -y \
