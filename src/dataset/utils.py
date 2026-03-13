@@ -15,8 +15,8 @@ class LidarOdometryWrapper:
 
     def __init__(
         self,
+        ride_id: str,
         dataset_root: str = DATASET_ROOT,
-        seq_idx: int = 0,
         rotation_angle: float = pi / 4,
     ):
         """
@@ -30,6 +30,10 @@ class LidarOdometryWrapper:
             Index of the sequence to load (default: 0)
         """
         self.dataset = BoreasDataset(dataset_root)
+        if ride_id not in self.dataset.seqDict.keys():
+            raise RuntimeError(f"Unknown ride {ride_id}")
+
+        seq_idx = self.dataset.seqDict[ride_id]
         self.seq = self.dataset.sequences[seq_idx]
 
         # Rotation matrix for rotation around z-axis
@@ -59,57 +63,15 @@ class LidarOdometryWrapper:
         rotated_points = points @ self._rotation_matrix
         return rotated_points
 
-    def get_lidar_point_cloud(self, index: int) -> np.ndarray:
-        """
-        Get LiDAR point cloud for a specific frame index.
-
-        Parameters:
-        -----------
-        index : int
-            Frame index to retrieve
-
-        Returns:
-        --------
-        points : numpy.ndarray of shape (N, 3)
-            Rotated LiDAR point cloud with x, y, z coordinates
-
-        Notes:
-        ------
-        - Points are always rotated around the z-axis by default
-        - Points are filtered to keep only x, y, z coordinates
-        """
+    def get_frame(self, index: int) -> tuple:
         lidar_frame = self.seq.get_lidar(index)
+
+        timestamp = lidar_frame.timestamp
 
         # Get raw points (first 3 columns: x, y, z)
         raw_points = lidar_frame.points[:, :3]
 
         rotated_points = self.rotate_points(raw_points)
-
-        # Unload to free memory
-        lidar_frame.unload_data()
-
-        return rotated_points
-
-    def get_velocities(self, index: int) -> np.ndarray:
-        """
-        Get linear and angular velocities for a specific frame index.
-
-        Parameters:
-        -----------
-        index : int
-            Frame index to retrieve
-
-        Returns:
-        --------
-        velocities : numpy.ndarray of shape (6,)
-            Array containing [vx, vy, vz, wx, wy, wz]
-
-        Notes:
-        ------
-        - Velocities are retrieved from the sensor frame
-        - Linear and angular velocities are always rotated around z-axis by default
-        """
-        lidar_frame = self.seq.get_lidar(index)
 
         # Access velocity data from the sensor frame
         # varpi contains [v_se_in_s; w_se_in_s] - velocities in sensor frame
@@ -127,27 +89,7 @@ class LidarOdometryWrapper:
         # Unload to free memory
         lidar_frame.unload_data()
 
-        return velocities
-
-    def get_lidar_points_and_velocities(self, index: int) -> tuple:
-        """
-        Get both LiDAR points and velocities for a specific frame index.
-
-        Parameters:
-        -----------
-        index : int
-            Frame index to retrieve
-
-        Returns:
-        --------
-        tuple of (points, velocities)
-            - points : numpy.ndarray of shape (N, 3) - Rotated LiDAR point cloud
-            - velocities : numpy.ndarray of shape (6,) - [vx, vy, vz, wx, wy, wz]
-        """
-        points = self.get_lidar_point_cloud(index)
-        velocities = self.get_velocities(index)
-
-        return points, velocities
+        return timestamp, rotated_points, velocities.reshape(6)
 
     def get_current_rotation_matrix(self) -> np.ndarray:
         """

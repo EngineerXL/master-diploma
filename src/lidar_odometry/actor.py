@@ -8,9 +8,8 @@ import numpy as np
 from .voxelize import voxelize
 from .icp import align_point_clouds
 from scipy.spatial.transform import RigidTransform as Tf
-from .icp_kabsch import icp_geman_mcclure
+from .icp_kabsch import align_points_geman_mcclure
 from .cloud_processing import remove_distant_points
-
 
 class LidarOdometryActor:
     """
@@ -33,11 +32,12 @@ class LidarOdometryActor:
 
     def __init__(self, config: dict = None):
         self._config = config
+        self._algo = self._config["algo"]
         self._prev_cloud = None
         self._prev_stamp = None
         self._initial_guess = None
-        self._voxel_size = 1
         self._velocities = np.zeros(6)
+        self._state = None
 
     def process_lidar_cloud(
         self,
@@ -49,15 +49,19 @@ class LidarOdometryActor:
             self._prev_cloud = processed_points
             self._prev_stamp = timestamp
             return
-
-        prev_voxelized = voxelize(self._prev_cloud, self._voxel_size)
-        cur_voxelized = voxelize(processed_points, self._voxel_size)
-        transform, _ = icp_geman_mcclure(
-            prev_voxelized,
-            cur_voxelized,
-            init_transform=self.get_initial_guess(),
-            max_iterations=100,
-        )
+            
+        prev_voxelized = voxelize(self._prev_cloud, self._config["voxel_size"])
+        cur_voxelized = voxelize(processed_points, self._config["voxel_size"])
+        if (self._algo == "icp_geman_mcclure"):
+            transform, info = align_points_geman_mcclure(
+                cur_voxelized,
+                prev_voxelized,
+                init_transform=self.get_initial_guess(),
+                max_iterations=self._config["icp_max_iterations"],
+            )
+        else:
+            raise RuntimeError(f"Unknown algorithm: {self._algo}")
+        self._state = {"icp_info" : info}
 
         self.save_initial_guess(transform)
         dt = timestamp - self._prev_stamp
@@ -67,8 +71,12 @@ class LidarOdometryActor:
         self._prev_cloud = processed_points
         self._prev_stamp = timestamp
 
+    # RigidTransform from scipy store angular velocity first
+    def swap_v_and_w(self, velocities: np.ndarray) -> np.ndarray:
+        return np.concat([velocities[3:6], velocities[0:3]])
+
     def preprocess_cloud(self, points: np.ndarray):
-        return remove_distant_points(points, 50)
+        return remove_distant_points(points, self._config["points_max_distance"])
 
     def get_initial_guess(self):
         return self._initial_guess
@@ -76,5 +84,11 @@ class LidarOdometryActor:
     def save_initial_guess(self, transform: Tf):
         self._initial_guess = transform
 
+    def set_currect_velocities(self, velocities: np.ndarray):
+        self._velocities = self.swap_v_and_w(velocities)
+
     def get_current_velocities(self) -> np.ndarray:
-        return self._velocities
+        return self.swap_v_and_w(self._velocities)
+
+    def get_state(self) -> dict:
+        return self._state
