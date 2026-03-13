@@ -123,7 +123,7 @@ class PostprocessingWrapper:
         self,
         frame_st: Optional[int] = None,
         frame_en: Optional[int] = None,
-        figsize: tuple = (16, 10),
+        figsize: tuple = (14, 10),
         height:int = 3,
         width:int = 2,
         save_path: Optional[str] = None,
