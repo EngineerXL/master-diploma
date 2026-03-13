@@ -8,7 +8,6 @@ import numpy as np
 from .voxelize import voxelize
 from .icp import align_point_clouds_icp
 from scipy.spatial.transform import RigidTransform as Tf
-from .icp_kabsch import align_points_geman_mcclure
 from .cloud_processing import remove_distant_points
 
 
