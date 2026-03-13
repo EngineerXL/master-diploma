@@ -3,6 +3,8 @@ matplotlib
 notebook
 numpy
 numpy-quaternion
+pip
 plotly
 pyceres
 scipy>=1.16.0
+tqdm
