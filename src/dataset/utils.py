@@ -18,16 +18,18 @@ class LidarOdometryWrapper:
         ride_id: str,
         dataset_root: str = DATASET_ROOT,
         rotation_angle: float = pi / 4,
-    ):
+    ) -> None:
         """
         Initialize the LidarOdometryWrapper.
 
         Parameters:
-        -----------
+        -------
+        ride_id : str
+            ID of the ride/sequence to load
         dataset_root : str
-            Root path to the BOREAS dataset
-        seq_idx : int
-            Index of the sequence to load (default: 0)
+            Root path to the BOREAS dataset (default: DATASET_ROOT)
+        rotation_angle : float
+            Rotation angle in radians around z-axis (default: pi/4)
         """
         self.dataset = BoreasDataset(dataset_root)
         if ride_id not in self.dataset.seqDict.keys():
