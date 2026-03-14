@@ -73,14 +73,13 @@ class LidarOdometryActor:
         # Pre-filter current points by removing distant outliers
         processed_points = self.preprocess_cloud(points)
 
-        # Voxelize both local map and current points for efficient ICP matching
-        map_voxelized = voxelize(self.get_local_map(), self._config["voxel_size"])
+        # Voxelize current points for efficient ICP matching
         cur_voxelized = voxelize(processed_points, self._config["voxel_size"])
 
         # Run ICP alignment to compute transformation between frames
         transform, info = align_point_clouds_icp(
             cur_voxelized,
-            map_voxelized,
+            self.get_local_map(),
             init_transform=self.get_initial_guess(),
             max_iterations=self._config["icp_max_iterations"],
             w_func="geman-mcclure",
