@@ -20,7 +20,7 @@ def main():
                 "voxel_size": 1,
                 "points_max_distance": 50,
                 "icp_max_iterations": 100,
-                "algo": "icp_geman_mcclure",
+                "algo": "icp",
             },
             "config_name": "test",
         }
