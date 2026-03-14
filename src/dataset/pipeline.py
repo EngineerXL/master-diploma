@@ -88,7 +88,7 @@ class LidarOdometryPipeline:
         ride_frame_en = self.ride_info["ride_frame_en"]
 
         _, _, first_frame_velocities = wrapper.get_frame(ride_frame_st)
-        self.actor.set_currect_velocities(first_frame_velocities)
+        self.actor.set_current_velocities(first_frame_velocities)
 
         # Process each frame in the ride range
         for i in tqdm(range(ride_frame_st, ride_frame_en)):
