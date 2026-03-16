@@ -22,11 +22,12 @@ RUN apt-get install -y \
     wget \
     zip
 
-# Install AWS
 WORKDIR /root/Downloads
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-RUN unzip awscliv2.zip && ./aws/install
-RUN rm -rf aws "awscliv2.zip"
+# Install AWS
+ARG AWS_FILENAME=awscliv2.zip
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "${AWS_FILENAME}"
+RUN unzip "${AWS_FILENAME}" && ./aws/install
+RUN rm -rf aws "${AWS_FILENAME}"
 
 # Install Utilities
 RUN apt-get install -y \
