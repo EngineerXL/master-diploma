@@ -60,14 +60,16 @@ def plot_lidar_clouds_animation(
     frame_duration_ms: int = 500,  # 0.5 seconds per frame
     fig_width: int = 18,
     fig_height: int = 9,
-    point_size_3d: int = 7,
-    point_size_2d: int = 12,
+    point_size_3d: int = 11,
+    point_size_2d: int = 16,
     x_low: float = -40.0,
     x_high: float = 40.0,
     y_low: float = -40.0,
     y_high: float = 40.0,
     z_low: float = -2.5,
-    z_high: float = 5.0,
+    z_high: float = 7.5,
+    v_low: float = -2.5,
+    v_high: float = 5.0,
     cmap: str = "inferno",
     alpha: float = 0.8,
 ):
@@ -87,11 +89,12 @@ def plot_lidar_clouds_animation(
         points_downsampled = filtered_points[
             np.random.choice(filtered_points.shape[0], n_points_to_show, replace=False)
         ]
+        points_sorted = points_downsampled[points_downsampled[:, 2].argsort()]
 
         xs, ys, zs = (
-            points_downsampled[:, 0],
-            points_downsampled[:, 1],
-            points_downsampled[:, 2],
+            points_sorted[:, 0],
+            points_sorted[:, 1],
+            points_sorted[:, 2],
         )
 
         fig = plt.figure(figsize=(fig_width, fig_height), dpi=300)
@@ -104,8 +107,8 @@ def plot_lidar_clouds_animation(
             ys,
             zs,
             c=zs,
-            vmin=z_low,
-            vmax=z_high,
+            vmin=v_low,
+            vmax=v_high,
             cmap=cmap,
             s=point_size_3d,
             alpha=alpha,
@@ -134,8 +137,8 @@ def plot_lidar_clouds_animation(
             ys,
             xs,
             c=zs,
-            vmin=z_low,
-            vmax=z_high,
+            vmin=v_low,
+            vmax=v_high,
             cmap=cmap,
             s=point_size_2d,
             alpha=alpha,
