@@ -18,6 +18,7 @@ RUN apt-get install -y \
     curl \
     gdb \
     git \
+    git-lfs \
     make \
     wget \
     zip
