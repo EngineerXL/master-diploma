@@ -1,5 +1,5 @@
 #!/bin/bash 
-root=. 
+root=/data/boreas
 aws s3 sync s3://boreas/boreas-2025-01-08-11-22 $root/boreas-2025-01-08-11-22 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
 aws s3 sync s3://boreas/boreas-2024-12-04-12-08 $root/boreas-2024-12-04-12-08 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
 aws s3 sync s3://boreas/boreas-2024-12-04-14-50 $root/boreas-2024-12-04-14-50 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
