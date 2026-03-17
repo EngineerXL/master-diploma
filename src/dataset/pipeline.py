@@ -62,12 +62,6 @@ class LidarOdometryPipeline:
         self.wrapper_settings = config["wrapper_settings"]
         self.config_name = config["config_name"]
 
-        # Initialize the LidarOdometryActor with actor settings
-        self.actor = LidarOdometryActor(config=self.actor_settings)
-
-        # Results storage
-        self.results: List[Dict] = []
-
         ride_frame_st = self.ride_info["ride_frame_st"]
         ride_frame_en = self.ride_info["ride_frame_en"]
         suffix = self.config_name
@@ -99,7 +93,14 @@ class LidarOdometryPipeline:
 
         wrapper.set_first_frame(ride_frame_st)
         _, _, first_frame_velocities = wrapper.get_frame(ride_frame_st)
-        self.actor.set_current_velocities(first_frame_velocities)
+
+        # Initialize the LidarOdometryActor with actor settings
+        self.actor = LidarOdometryActor(
+            config=self.actor_settings, initial_velocities=first_frame_velocities
+        )
+
+        # Results storage
+        self.results: List[Dict] = []
 
         # Process each frame in the ride range
         for i in tqdm(

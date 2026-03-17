@@ -34,7 +34,9 @@ class LidarOdometryActor:
         State info, e.g., {"icp_info": ...}
     """
 
-    def __init__(self, config: dict = None):
+    def __init__(
+        self, config: dict = None, initial_velocities: np.ndarray | None = None
+    ):
         """Initialize the actor.
 
         Parameters
@@ -49,6 +51,8 @@ class LidarOdometryActor:
         self._initial_guess = None
         self._velocities = np.zeros(6)
         self._state = None
+        if initial_velocities is not None:
+            self.set_current_velocities(initial_velocities)
 
     def process_lidar_cloud(self, points: np.ndarray, timestamp: float) -> None:
         """Process a LiDAR frame.
