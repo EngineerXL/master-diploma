@@ -1,5 +1,7 @@
 FROM python:3.12
 
+ENV PYTHONPATH="${PYTHONPATH}:/workspaces/master-diploma"
+
 # Update sources
 RUN apt-get update
 
