@@ -47,7 +47,7 @@ def check_segment_segment_intersection(
 
 def remove_points_by_obstacle_bbox_2d(
     points: np.ndarray,
-    bbox_center: np.ndarray = DEFAULT_TRUCK_OFFSET,
+    bbox_center: np.ndarray,
     bbox_dims: np.ndarray = DEFAULT_FORD_TRANSIT_VAN_DIMS,
     origin: np.ndarray = np.array([0.0, 0.0, 0.0]),
 ) -> np.ndarray:

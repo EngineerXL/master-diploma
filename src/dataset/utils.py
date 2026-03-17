@@ -1,6 +1,7 @@
 from math import pi
 from pyboreas import BoreasDataset
 import numpy as np
+from src.geometry.add_obstacle import remove_points_by_obstacle_bbox_2d,DEFAULT_TRUCK_OFFSET, DEFAULT_FORD_TRANSIT_VAN_DIMS
 
 DATASET_ROOT = "/data/boreas"
 
@@ -18,6 +19,10 @@ class LidarOdometryWrapper:
         ride_id: str,
         dataset_root: str = DATASET_ROOT,
         rotation_angle: float = pi / 4,
+        truck_dims: np.ndarray | None = DEFAULT_FORD_TRANSIT_VAN_DIMS,
+        truck_offset: np.ndarray = DEFAULT_TRUCK_OFFSET,
+        truck_initial_x: float = -7.5,  # truck will traverse 15 meters forward
+        truck_overtake_vx: float = 1,
     ) -> None:
         """
         Initialize the LidarOdometryWrapper.
@@ -45,6 +50,16 @@ class LidarOdometryWrapper:
         self._rotation_matrix = np.array(
             [[cos_theta, -sin_theta, 0], [sin_theta, cos_theta, 0], [0, 0, 1]]
         )
+
+        self.truck_dims = truck_dims
+        self.truck_offset = truck_offset
+        self.truck_initial_x = truck_initial_x
+        self.truck_overtake_vx = truck_overtake_vx
+        self.first_timestamp = None
+
+    def set_first_frame(self, index: int):
+        first_lidar_frame = self.seq.get_lidar(index)
+        self.first_timestamp = first_lidar_frame.timestamp
 
     def rotate_points(self, points: np.ndarray) -> np.ndarray:
         """
@@ -75,6 +90,20 @@ class LidarOdometryWrapper:
 
         rotated_points = self.rotate_points(raw_points)
 
+        if self.truck_dims is not None:
+            frame_offset = DEFAULT_TRUCK_OFFSET
+            if self.first_timestamp is None:
+                raise RuntimeError(
+                    "First frame index should be set before getting frame!"
+                )
+            dt = timestamp - self.first_timestamp
+            frame_offset[0] = self.truck_initial_x + self.truck_overtake_vx * dt
+            output_points = remove_points_by_obstacle_bbox_2d(
+                rotated_points, frame_offset
+            )
+        else:
+            output_points = rotated_points
+
         # Access velocity data from the sensor frame
         # varpi contains [v_se_in_s; w_se_in_s] - velocities in sensor frame
         varpi = (
@@ -91,7 +120,7 @@ class LidarOdometryWrapper:
         # Unload to free memory
         lidar_frame.unload_data()
 
-        return timestamp, rotated_points, velocities.reshape(6)
+        return timestamp, output_points, velocities.reshape(6)
 
     def get_current_rotation_matrix(self) -> np.ndarray:
         """
