@@ -60,6 +60,7 @@ def plot_lidar_clouds_animation(
     frame_duration_ms: int = 500,  # 0.5 seconds per frame
     fig_width: int = 18,
     fig_height: int = 9,
+    dpi: int = 300,
     point_size_3d: int = 11,
     point_size_2d: int = 16,
     x_low: float = -40.0,
@@ -97,7 +98,7 @@ def plot_lidar_clouds_animation(
             points_sorted[:, 2],
         )
 
-        fig = plt.figure(figsize=(fig_width, fig_height), dpi=300)
+        fig = plt.figure(figsize=(fig_width, fig_height), dpi=dpi)
         fig.suptitle(f"{title} - Frame {i+1}")
 
         # Create 3D scatter plot using matplotlib
