@@ -67,6 +67,11 @@ class LidarOdometryPipeline:
         # Results storage
         self.results: List[Dict] = []
 
+        ride_frame_st = self.ride_info["ride_frame_st"]
+        ride_frame_en = self.ride_info["ride_frame_en"]
+        suffix = self.config_name
+        self.pipeline_name = f"{ride_frame_st}-{ride_frame_en}-{suffix}"
+
     def _get_wrapper(self) -> LidarOdometryWrapper:
         wrapper = LidarOdometryWrapper(ride_id=self.ride_info["ride_id"])
         return wrapper
@@ -91,7 +96,10 @@ class LidarOdometryPipeline:
         self.actor.set_current_velocities(first_frame_velocities)
 
         # Process each frame in the ride range
-        for i in tqdm(range(ride_frame_st, ride_frame_en)):
+        for i in tqdm(
+            range(ride_frame_st, ride_frame_en),
+            desc=f"Running '{self.ride_info["ride_id"]}/{self.pipeline_name}' pipeline...",
+        ):
             # Get rotated LiDAR point cloud from the wrapper
             timestamp, points, gt_velocities = wrapper.get_frame(i)
 
@@ -124,10 +132,7 @@ class LidarOdometryPipeline:
         # Create output folder if it doesn't exist
         os.makedirs(output_folder, exist_ok=True)
 
-        ride_frame_st = self.ride_info["ride_frame_st"]
-        ride_frame_en = self.ride_info["ride_frame_en"]
-        suffix = self.config_name
-        fname = f"{ride_frame_st}-{ride_frame_en}-{suffix}.json"
+        fname = f"{self.pipeline_name}.json"
         # Save results as JSON file
         output_path = os.path.join(output_folder, fname)
         import json
