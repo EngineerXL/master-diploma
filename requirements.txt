@@ -3,6 +3,7 @@ matplotlib
 notebook
 numpy
 numpy-quaternion
+pandas
 pip
 plotly
 pyceres

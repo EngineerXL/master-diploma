@@ -1,8 +1,10 @@
 import numpy as np
+import pandas as pd
 import json
 from typing import Dict, List, Optional
 import matplotlib.pyplot as plt
 from src.dataset.pipeline import DATA_OUTPUT_ROOT
+
 
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
 
@@ -70,13 +72,13 @@ class PostprocessingWrapper:
             bag_data = json.load(f)
         return bag_data
 
-    def get_velocity_data(self, ride_segment_id: int) -> Dict[str, List[float]]:
+    def get_velocity_data(self, ride_segment_id: int) -> Dict[str, np.ndarray]:
         """
         Extract all velocity data from results into organized lists.
 
         Returns:
         --------
-        Dict[str, List[float]]
+        Dict[str, np.ndarray]
             Dictionary with keys: timestamp, vx_gt, vy_gt, vz_gt, wx_gt, wy_gt, wz_gt,
             vx_est, vy_est, vz_est, wx_est, wy_est, wz_est
         """
@@ -102,7 +104,54 @@ class PostprocessingWrapper:
                 data[f"{field}_gt"].append(gt[field])
                 data[f"{field}_est"].append(est[field])
 
-        return data
+        data_np = {x: np.array(y) for x, y in data.items()}
+        return data_np
+
+    def get_velocity_errors(
+        self, ride_segment_id: int | None = None
+    ) -> Dict[str, np.ndarray]:
+        segments = (
+            range(len(self.bag_paths)) if ride_segment_id is None else [ride_segment_id]
+        )
+        errors = {field: np.array([]) for field in VELOCITIES_FIELDS}
+        for segment in segments:
+            data = self.get_velocity_data(segment)
+            for field in VELOCITIES_FIELDS:
+                err_part = data[f"{field}_est"] - data[f"{field}_gt"]
+                errors[field] = np.concatenate([errors[field], err_part])
+        return errors
+
+    def get_velocity_metrics(self, ride_segment_id: int | None = None) -> pd.DataFrame:
+        """
+        Calculate velocity metrics (RMSE, mean, stddev, MAE) for each velocity component.
+
+        Parameters:
+        ----------
+        ride_segment_id : int or None
+            Ride segment ID to process. If None, processes all segments.
+        """
+        # Get raw errors (estimated - ground truth) - already combined by get_velocity_errors
+        errors = self.get_velocity_errors(ride_segment_id)
+
+        # Calculate metrics for each velocity component
+        metrics = {}
+        for field in VELOCITIES_FIELDS:
+            # Calculate metrics
+            rmse = np.sqrt(np.mean(errors[field] ** 2))
+            mean_err = np.mean(errors[field])
+            q95_abs = np.quantile(np.abs(errors[field]), 0.95)
+            mae = np.mean(np.abs(errors[field]))
+
+            metrics[field] = {
+                "RMSE": rmse,
+                "mean": mean_err,
+                "q95_abs": q95_abs,
+                "MAE": mae,
+            }
+
+        # Create DataFrame with metric types as rows and velocity components as columns
+        df = pd.DataFrame(metrics).T
+        return df
 
     def plot_velocities(
         self,
@@ -152,6 +201,78 @@ class PostprocessingWrapper:
             ax.set_title(f"{plot_name} ({vel_field}) - Estimated vs Ground Truth")
             ax.set_xlabel("Time (s)")
             ax.set_ylabel("Velocity (m/s)" if col == 0 else "Angular Velocity (rad/s)")
+            ax.legend(loc="best")
+            ax.grid(True, alpha=0.3)
+
+        # Adjust layout to prevent overlap
+        plt.tight_layout()
+
+        if save_path:
+            fig.savefig(save_path, dpi=300, bbox_inches="tight")
+            print(f"Figure saved to {save_path}")
+
+        return fig
+
+    def plot_velocity_errors(
+        self,
+        ride_segment_id: int | None = None,
+        figsize: tuple = (14, 10),
+        bins: int = 50,
+        height: int = 3,
+        width: int = 2,
+        save_path: Optional[str] = None,
+    ):
+        """
+        Plot error histograms for every velocity component.
+
+        Parameters:
+        ----------
+        ride_segment_id : int or None
+            Ride segment ID to process. If None, processes all segments.
+        figsize : tuple
+            Figure size (width, height).
+        bins : int
+            Number of histogram bins.
+        save_path : str or None
+            Path to save the figure. If None, figure is not saved.
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The created figure object.
+        """
+        errors = self.get_velocity_errors(ride_segment_id)
+
+        # Create figure with 2 columns (linear and angular velocities) and 3 rows
+        fig, axes = plt.subplots(height, width, figsize=figsize)
+
+        for i, field in enumerate(VELOCITIES_FIELDS):
+            col = i // height
+            row = i % height
+            ax = axes[row, col]
+
+            # Plot histogram for this velocity component error
+            ax.hist(
+                errors[field],
+                bins=bins,
+                alpha=0.7,
+                color="steelblue",
+                edgecolor="black",
+                linewidth=0.5,
+            )
+
+            # Add vertical line at zero error
+            ax.axvline(
+                x=0, color="red", linestyle="--", linewidth=1.0, label="Zero Error"
+            )
+
+            # Set title and labels
+            plot_name = (
+                "Linear Velocity Errors" if col == 0 else "Angular Velocity Errors"
+            )
+            ax.set_title(f"{plot_name} ({field})")
+            ax.set_xlabel("Error")
+            ax.set_ylabel("Frequency")
             ax.legend(loc="best")
             ax.grid(True, alpha=0.3)
 

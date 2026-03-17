@@ -1,0 +1,45 @@
+{
+    "actor_settings": {
+        "voxel_size": 1,
+        "points_max_distance": 80,
+        "icp_max_iterations": 100,
+        "algo": "icp"
+    },
+    "wrapper_settings": {
+        "truck_initial_x": -7.5,
+        "truck_overtake_vx": 1
+    },
+    "config_name": "small",
+    "ride_segments": [
+        {
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 7000,
+            "ride_frame_en": 7150
+        },
+        {
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 7150,
+            "ride_frame_en": 7300
+        },
+        {
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 7300,
+            "ride_frame_en": 7450
+        },
+        {
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 7450,
+            "ride_frame_en": 7600
+        },
+        {
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 7600,
+            "ride_frame_en": 7750
+        },
+        {
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 7750,
+            "ride_frame_en": 7900
+        }
+    ]
+}
