@@ -1,4 +1,3 @@
-from skspatial.objects import Plane, LineSegment, Line
 import numpy as np
 
 
