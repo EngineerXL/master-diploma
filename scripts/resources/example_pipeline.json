@@ -12,11 +12,9 @@
     "config_name": "test",
     "ride_segments": [
         {
-            "ride_info": {
-                "ride_id": "boreas-2021-05-06-13-19",
-                "ride_frame_st": 200,
-                "ride_frame_en": 210
-            }
+            "ride_id": "boreas-2021-05-06-13-19",
+            "ride_frame_st": 200,
+            "ride_frame_en": 210
         }
     ]
 }

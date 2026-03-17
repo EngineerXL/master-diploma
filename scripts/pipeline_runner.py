@@ -60,15 +60,9 @@ def load_configs_from_json(json_file: str) -> list[dict]:
                 f"ride_segments[{i}] is not a valid segment object (expected dict)"
             )
 
-        if "ride_info" not in segment:
-            raise ValueError(
-                f"Missing required field 'ride_info' in ride_segments[{i}]"
-            )
-
-        ride_info = segment["ride_info"]
         configs.append(
             {
-                "ride_info": ride_info,
+                "ride_info": segment,
                 "actor_settings": data["actor_settings"],
                 "wrapper_settings": data["wrapper_settings"],
                 "config_name": data["config_name"],
