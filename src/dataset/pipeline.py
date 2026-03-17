@@ -59,6 +59,7 @@ class LidarOdometryPipeline:
         """
         self.ride_info = config["ride_info"]
         self.actor_settings = config["actor_settings"]
+        self.wrapper_settings = config["wrapper_settings"]
         self.config_name = config["config_name"]
 
         # Initialize the LidarOdometryActor with actor settings
@@ -73,7 +74,11 @@ class LidarOdometryPipeline:
         self.pipeline_name = f"{ride_frame_st}-{ride_frame_en}-{suffix}"
 
     def _get_wrapper(self) -> LidarOdometryWrapper:
-        wrapper = LidarOdometryWrapper(ride_id=self.ride_info["ride_id"])
+        wrapper = LidarOdometryWrapper(
+            ride_id=self.ride_info["ride_id"],
+            truck_initial_x=self.wrapper_settings["truck_initial_x"],
+            truck_overtake_vx=self.wrapper_settings["truck_overtake_vx"],
+        )
         return wrapper
 
     def velocity_do_dict(self, velocities: np.ndarray) -> Dict:
@@ -92,13 +97,14 @@ class LidarOdometryPipeline:
         ride_frame_st = self.ride_info["ride_frame_st"]
         ride_frame_en = self.ride_info["ride_frame_en"]
 
+        wrapper.set_first_frame(ride_frame_st)
         _, _, first_frame_velocities = wrapper.get_frame(ride_frame_st)
         self.actor.set_current_velocities(first_frame_velocities)
 
         # Process each frame in the ride range
         for i in tqdm(
             range(ride_frame_st, ride_frame_en),
-            desc=f"Running '{self.ride_info["ride_id"]}/{self.pipeline_name}' pipeline...",
+            desc=f"Running '{self.get_folder_and_fname()}' pipeline...",
         ):
             # Get rotated LiDAR point cloud from the wrapper
             timestamp, points, gt_velocities = wrapper.get_frame(i)
@@ -141,3 +147,6 @@ class LidarOdometryPipeline:
             json.dump(self.results, f, indent=2)
 
         return output_path
+
+    def get_folder_and_fname(self) -> str:
+        return f'{self.ride_info["ride_id"]}/{self.pipeline_name}'

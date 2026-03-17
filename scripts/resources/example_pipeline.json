@@ -1,16 +1,22 @@
-[
-    {
-        "ride_info": {
-            "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 200,
-            "ride_frame_en": 210
-        },
-        "actor_settings": {
-            "voxel_size": 1,
-            "points_max_distance": 50,
-            "icp_max_iterations": 100,
-            "algo": "icp"
-        },
-        "config_name": "test"
-    }
-]
+{
+    "actor_settings": {
+        "voxel_size": 1,
+        "points_max_distance": 50,
+        "icp_max_iterations": 100,
+        "algo": "icp"
+    },
+    "wrapper_settings": {
+        "truck_initial_x": -7.5,
+        "truck_overtake_vx": 1
+    },
+    "config_name": "test",
+    "ride_segments": [
+        {
+            "ride_info": {
+                "ride_id": "boreas-2021-05-06-13-19",
+                "ride_frame_st": 200,
+                "ride_frame_en": 210
+            }
+        }
+    ]
+}
