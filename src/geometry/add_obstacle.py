@@ -3,6 +3,18 @@ import numpy as np
 
 # https://www.dimensions.com/element/ford-transit-van
 DEFAULT_FORD_TRANSIT_VAN_DIMS = np.array([5.59, 2.07, 2.09])
+# https://github.com/utiasASRL/pyboreas/blob/master/figs/boreas_rt/boreas_rt_sensors.png
+BOREAS_LIDAR_POS = np.array([0, 0.82, 1.92 + 0.13])
+DEFAULT_LATERAL_DISTANCE = 1
+DEFAULT_TRUCK_OFFSET = np.array(
+    [
+        0,
+        DEFAULT_FORD_TRANSIT_VAN_DIMS[1] / 2
+        + BOREAS_LIDAR_POS[1] / 2
+        + DEFAULT_LATERAL_DISTANCE,
+        DEFAULT_FORD_TRANSIT_VAN_DIMS[2] / 2 - BOREAS_LIDAR_POS[2],
+    ]
+)
 
 
 def check_segment_line_intersection(
@@ -35,7 +47,7 @@ def check_segment_segment_intersection(
 
 def remove_points_by_obstacle_bbox_2d(
     points: np.ndarray,
-    bbox_center: np.ndarray,
+    bbox_center: np.ndarray = DEFAULT_TRUCK_OFFSET,
     bbox_dims: np.ndarray = DEFAULT_FORD_TRANSIT_VAN_DIMS,
     origin: np.ndarray = np.array([0.0, 0.0, 0.0]),
 ) -> np.ndarray:
