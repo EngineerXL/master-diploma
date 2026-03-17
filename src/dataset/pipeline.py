@@ -105,7 +105,7 @@ class LidarOdometryPipeline:
         # Process each frame in the ride range
         for i in tqdm(
             range(ride_frame_st, ride_frame_en),
-            desc=f"Running '{self.get_folder_and_fname()}' pipeline...",
+            desc=f"Running \"{self.ride_info['ride_id']}/{self.pipeline_name}\" pipeline...",
         ):
             # Get rotated LiDAR point cloud from the wrapper
             timestamp, points, gt_velocities = wrapper.get_frame(i)
@@ -148,6 +148,3 @@ class LidarOdometryPipeline:
             json.dump(self.results, f, indent=2)
 
         return output_path
-
-    def get_folder_and_fname(self) -> str:
-        return f'{self.ride_info["ride_id"]}/{self.pipeline_name}'
