@@ -4,12 +4,10 @@ from scipy.spatial import cKDTree
 from scipy.spatial.transform import Rotation, RigidTransform
 
 
-def geman_mcclure_weights(r: np.ndarray, c: float) -> np.ndarray:
-    # IRLS weights for Geman-McClure (scaling doesn't change argmin):
-    # w(r) = c^2 / (r^2 + c^2)^2
-    r2 = r * r
-    c2 = c * c
-    return c2 / (r2 + c2) ** 2
+def geman_mcclure_weights(distances_e: np.ndarray, sigma: float) -> np.ndarray:
+    # ro(e) = (0.5 * e^2) / (sigma / 3 + e ^ 2)
+    distances_e_2 = np.square(distances_e)
+    return 0.5 / (sigma / 3 + distances_e_2)
 
 
 def rigid_kabsch(
@@ -30,91 +28,79 @@ def rigid_kabsch(
     return RigidTransform.from_components(translation, rot)
 
 
+def build_correspondances(
+    source: np.ndarray,
+    target: np.ndarray,
+    target_tree: cKDTree,
+    max_correspondence_distance_tau_t: float,
+):
+    # Find corresponding points in target
+    distances, indices = target_tree.query(source, k=1)
+
+    # Apply correspondence distance filter if specified
+    mask = distances <= max_correspondence_distance_tau_t
+    if not mask.any():
+        raise RuntimeError("No valid correspondences found")
+    source_corr = source[mask]
+    distances = distances[mask]
+    target_corr = target[indices[mask]]
+    return source_corr, target_corr, distances
+
+
 def align_point_clouds_icp(
     source: np.ndarray,
     target: np.ndarray,
     init_transform=None,
+    displacement_deviation_sigma_t: float = 0.1,
+    max_correspondence_distance_tau_t: float | None = None,
     max_iterations: int = 50,
-    tolerance: float = 1e-7,
-    max_correspondence_distance: float | None = None,
-    w_func: str | None = None,
+    tolerance_gamma: float = 1e-4,
 ):
-    """
-    Iterative Closest Point (ICP) algorithm using scipy RigidTransform.
-
-    Parameters
-    ----------
-    source : np.ndarray
-        Source point cloud (N, 3)
-    target : np.ndarray
-        Target point cloud (M, 3)
-    init_transform : scipy.spatial.transform.RigidTransform or None
-        Initial transformation. If None, identity transform is used.
-    max_iterations : int
-        Maximum number of ICP iterations (default: 50)
-    tolerance : float
-        Convergence tolerance for RMS error (default: 1e-7)
-    max_correspondence_distance : float or None
-        Maximum distance for point correspondence. If None, all points are matched.
-
-    Returns
-    -------
-    transform : scipy.spatial.transform.RigidTransform
-        The computed rigid transformation
-    info : dict
-        Information dictionary with {"iterations": iterations}
-    """
     # Ensure inputs are float64 for numerical stability
     source = source.astype(np.float64)
     target = target.astype(np.float64)
 
     # Initialize transform
     if init_transform is None:
-        transform = RigidTransform.from_exp_coords(np.zeros(6))
+        transform = RigidTransform.identity()
     else:
         transform = init_transform
 
+    # 3 sigma rule
+    if max_correspondence_distance_tau_t is None:
+        max_correspondence_distance_tau_t = 3 * displacement_deviation_sigma_t
+
     # Build KD-tree on target for efficient nearest neighbor search
-    tree = cKDTree(target)
+    target_tree = cKDTree(target)
 
     iterations = 0
     converged = False
 
+    aligned_source = transform.apply(source)
+
     for iteration in range(max_iterations):
-        iterations += 1
-
-        aligned_source = transform.apply(source)
-
-        # Find corresponding points in target
-        distances, indices = tree.query(aligned_source, k=1)
-
-        # Apply correspondence distance filter if specified
-        if max_correspondence_distance is not None:
-            mask = distances <= max_correspondence_distance
-            if not mask.any():
-                # No valid correspondences found
-                break
-            aligned_source = aligned_source[mask]
-            distances = distances[mask]
-            target_filtered = target[indices[mask]]
-        else:
-            aligned_source = aligned_source
-            distances = distances
-            target_filtered = target[indices]
-
-        if w_func == "geman-mcclure":
-            c_from_median_scale = 2
-            med = float(np.median(distances))
-            c_it = max(1e-12, c_from_median_scale * med)
-
-            # IRLS weights + weighted Kabsch
-            weights = geman_mcclure_weights(distances, c_it)
-        else:
-            weights = np.ones(target_filtered.shape[0])
+        aligned_source_corr, target_corr, distances = build_correspondances(
+            aligned_source, target, target_tree, max_correspondence_distance_tau_t
+        )
+        weights = geman_mcclure_weights(distances, displacement_deviation_sigma_t)
 
         # Compute optimal rotation and translation using Kabsch algorithm
-        delta_transform = rigid_kabsch(aligned_source, target_filtered, weights)
+        delta_transform = rigid_kabsch(aligned_source_corr, target_corr, weights)
 
+        aligned_source = delta_transform.apply(aligned_source)
         transform = delta_transform * transform
+        iterations += 1
 
-    return transform, {"iterations": iterations, "converged": converged}
+        if icp_convergence_criterion_met(delta_transform, tolerance_gamma):
+            converged = True
+            break
+
+    return transform, {
+        "iterations": iterations,
+        "converged": bool(converged),
+    }
+
+
+def icp_convergence_criterion_met(delta_transform: RigidTransform, tolerance_gamma):
+    velocities = delta_transform.as_exp_coords()
+    return np.linalg.norm(velocities) < tolerance_gamma
