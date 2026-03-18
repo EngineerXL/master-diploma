@@ -7,7 +7,7 @@ Processes LiDAR point clouds and retrieves current velocities using ICP-based od
 import numpy as np
 from .voxelize import voxelize
 from .icp import align_point_clouds_icp
-from scipy.spatial.transform import RigidTransform as Tf
+from scipy.spatial.transform import RigidTransform
 from .cloud_processing import remove_distant_points
 
 
@@ -17,42 +17,36 @@ class LidarOdometryActor:
 
     Processes incoming LiDAR point clouds by filtering distant points, voxelizing
     for efficient matching, aligning to a local map via ICP, and computing velocities.
-
-    Attributes:
-    ----------
-    _config : dict
-        Algorithm parameters: "algo", "voxel_size", "points_max_distance", "icp_max_iterations"
-    _local_map : np.ndarray or None
-        Accumulated local map (N, 3). None initially.
-    _prev_stamp : float or None
-        Timestamp of last processed frame for velocity computation.
-    _initial_guess : RigidTransform or None
-        Initial ICP transformation guess. Updated after each alignment.
-    _velocities : np.ndarray
-        Current velocities [vx, vy, vz, wx, wy, wz] in m/s and rad/s.
-    _state : dict or None
-        State info, e.g., {"icp_info": ...}
     """
 
-    def __init__(
-        self, config: dict = None, initial_velocities: np.ndarray | None = None
-    ):
-        """Initialize the actor.
-
-        Parameters
-        ----------
-        config : dict
-            Required keys: "algo", "voxel_size", "points_max_distance", "icp_max_iterations"
-        """
-        self._config = config
-        self._algo = self._config["algo"]
+    def __init__(self, config: dict, initial_velocities: np.ndarray = np.zeros(6)):
+        self.parse_config(config)
         self._local_map = None
         self._prev_stamp = None
         self._initial_guess = None
-        self._velocities = np.zeros(6)
         self._state = None
-        if initial_velocities is not None:
-            self.set_current_velocities(initial_velocities)
+        self.set_current_velocities(initial_velocities)
+        initial_transform = RigidTransform.from_exp_coords(self._velocities)
+        self.update_initial_guess(initial_transform)
+        # Set initial deviation
+        self.deviations_2_sum = np.square(
+            self.initial_max_correspondance_distance_tau_0
+        )
+        self.deviations_count = 1
+
+    def parse_config(self, config: dict):
+        self.voxel_size = config["voxel_size"]
+        self.icp_max_iterations = config["icp_max_iterations"]
+        self.points_max_distance_r_max = config["points_max_distance_r_max"]
+        self.min_deviation_distance_delta_min = config[
+            "min_deviation_distance_delta_min"
+        ]
+        self.tolerance_gamma = config["tolerance_gamma"]
+        self.initial_max_correspondance_distance_tau_0 = config[
+            "initial_max_correspondance_distance_tau_0"
+        ]
+        self.factor_voxel_size_map_merge = config["factor_voxel_size_map_merge"]
+        self.factor_voxel_size_registration = config["factor_voxel_size_registration"]
 
     def process_lidar_cloud(self, points: np.ndarray, timestamp: float) -> None:
         """Process a LiDAR frame.
@@ -75,24 +69,31 @@ class LidarOdometryActor:
             return
 
         # Pre-filter current points by removing distant outliers
-        processed_points = self.preprocess_cloud(points)
+        preprocessed_points = self.preprocess_cloud(points)
 
         # Voxelize current points for efficient ICP matching
-        cur_voxelized = voxelize(processed_points, self._config["voxel_size"])
+        points_merge = voxelize(
+            preprocessed_points, self.factor_voxel_size_map_merge * self.voxel_size
+        )
+        points_reduced = voxelize(
+            points_merge, self.factor_voxel_size_registration * self.voxel_size
+        )
 
         # Run ICP alignment to compute transformation between frames
         transform, info = align_point_clouds_icp(
-            cur_voxelized,
+            points_reduced,
             self.get_local_map(),
             init_transform=self.get_initial_guess(),
-            max_iterations=self._config["icp_max_iterations"],
-            w_func="geman-mcclure",
+            max_iterations=self.icp_max_iterations,
+            displacement_deviation_sigma_t=self.get_deviation(),
+            tolerance_gamma=self.tolerance_gamma,
         )
 
         # Store ICP information in state
         self._state = {"icp_info": info}
         # Save the computed transformation as initial guess for next iteration
-        self.save_initial_guess(transform)
+        self.update_initial_guess(transform)
+        self.update_deviation(transform)
 
         # Compute velocity from transformation delta and time difference
         dt = timestamp - self._prev_stamp
@@ -116,15 +117,30 @@ class LidarOdometryActor:
 
     def preprocess_cloud(self, points: np.ndarray) -> np.ndarray:
         """Remove distant outliers from a point cloud."""
-        return remove_distant_points(points, self._config["points_max_distance"])
+        return remove_distant_points(points, self.points_max_distance_r_max)
 
-    def get_initial_guess(self) -> Tf | None:
-        """Get the initial ICP transformation guess."""
-        return self._initial_guess
+    def get_initial_guess(self):
+        return self.initial_guess
 
-    def save_initial_guess(self, transform: Tf) -> None:
-        """Save a transformation as the initial guess for next ICP iteration."""
-        self._initial_guess = transform
+    def update_initial_guess(self, transform: RigidTransform):
+        self.initial_guess = transform
+
+    def get_deviation(self):
+        return np.sqrt(self.deviations_2_sum / self.deviations_count)
+
+    def calculate_deviations_from_tf(self, transform: RigidTransform):
+        t, rot = transform.as_components()
+        delta_t = np.linalg.norm(t)
+        theta = np.arccos((np.trace(rot.as_matrix()) - 1) / 2)
+        delta_rot = 2 * self.points_max_distance_r_max * np.sin(theta / 2)
+        return delta_t, delta_rot
+
+    def update_deviation(self, transform: RigidTransform):
+        delta_t, delta_rot = self.calculate_deviations_from_tf(transform)
+        cur_delta_upper_bound = delta_t + delta_rot
+        if cur_delta_upper_bound >= self.min_deviation_distance_delta_min:
+            self.deviations_2_sum += np.square(cur_delta_upper_bound)
+            self.deviations_count += 1
 
     def set_current_velocities(self, velocities: np.ndarray) -> None:
         """Set velocities from an external source."""
