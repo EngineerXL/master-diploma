@@ -1,9 +1,13 @@
 {
     "actor_settings": {
-        "voxel_size": 1,
-        "points_max_distance": 80,
-        "icp_max_iterations": 100,
-        "algo": "icp"
+        "voxel_size": 0.5,
+        "points_max_distance_r_max": 50,
+        "min_deviation_distance_delta_min": 0.1,
+        "icp_max_iterations": 200,
+        "tolerance_gamma": 1e-4,
+        "initial_max_correspondance_distance_tau_0": 2,
+        "factor_voxel_size_map_merge": 0.5,
+        "factor_voxel_size_registration": 1.5
     },
     "wrapper_settings": {
         "truck_initial_x": -7.5,
