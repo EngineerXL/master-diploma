@@ -14,7 +14,7 @@
     "wrapper_settings": {
         "truck_initial_x": -12.5,
         "truck_overtake_vx": 1,
-        "simulate_truck": false
+        "simulate_truck": true
     },
     "config_name": "small",
     "ride_segments": [
