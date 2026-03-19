@@ -8,7 +8,6 @@ import numpy as np
 from .voxelize import voxelize
 from .icp import align_point_clouds_icp
 from scipy.spatial.transform import RigidTransform
-from .cloud_processing import remove_distant_points
 from .local_map import VoxelMap
 
 
@@ -50,6 +49,7 @@ class LidarOdometryActor:
         self.factor_voxel_size_map_merge = config["factor_voxel_size_map_merge"]
         self.factor_voxel_size_registration = config["factor_voxel_size_registration"]
         self.max_points_per_voxel_N_max = config["max_points_per_voxel_N_max"]
+        self.use_local_map = config["use_local_map"]
 
     def process_lidar_cloud(self, points: np.ndarray, timestamp: float) -> None:
         """Process a LiDAR frame.
@@ -72,10 +72,9 @@ class LidarOdometryActor:
 
         if len(self.state["transforms"]) == 0:
             # First frame: register as initial map and return early
-            # self.local_map.add_points(points_merge)
             self.state["prev_timestamp"] = timestamp
             self.state["transforms"].append(RigidTransform.identity())
-            self.prev_cloud = points_merge
+            self.update_local_map(points_merge, self.get_transform(-1))
             return
 
         points_reduced = voxelize(
@@ -83,15 +82,14 @@ class LidarOdometryActor:
         )
 
         dt = timestamp - self.state["prev_timestamp"]
-        t_prev = self.state["transforms"][-1]
+        t_prev = self.get_transform(-1)
         t_pred = self.get_initial_guess(dt)
         points_global = (t_prev * t_pred).apply(points_reduced)
 
         # Run ICP alignment to compute transformation between frames
         t_icp, info = align_point_clouds_icp(
             points_global,
-            self.prev_cloud,
-            # self.local_map.get_points(),
+            self.get_local_map_points(),
             max_iterations=self.icp_max_iterations,
             displacement_deviation_sigma_t=self.get_deviation(),
             tolerance_gamma=self.tolerance_gamma,
@@ -106,9 +104,7 @@ class LidarOdometryActor:
         # Save the computed transformation as initial guess for next iteration
         self.update_initial_guess(t_cur)
         self.update_deviation(pose_deviation_delta_t)
-        # self.local_map.add_points(t_cur.apply(points_merge))
-        # self.local_map.remove_distant_voxels(t_cur)
-        self.prev_cloud = t_cur.apply(points)
+        self.update_local_map(points_merge, t_cur)
 
         # Compute velocity from relative transformation and time difference
         t_relative = t_prev.inv() * t_cur
@@ -121,12 +117,28 @@ class LidarOdometryActor:
 
     def get_initial_guess(self, dt: float):
         if len(self.state["transforms"]) >= 2:
-            return self.state["transforms"][-2].inv() * self.state["transforms"][-1]
+            return self.get_transform(-2).inv() * self.get_transform(-1)
         else:
             return RigidTransform.from_exp_coords(self.state["velocities"] * dt)
 
     def update_initial_guess(self, transform: RigidTransform):
         self.state["transforms"].append(transform)
+
+    def get_local_map_points(self):
+        if self.use_local_map:
+            return self.local_map.get_points()
+        else:
+            return self.prev_points
+
+    def update_local_map(self, points: np.ndarray, pose: RigidTransform):
+        if self.use_local_map:
+            self.local_map.add_points(pose.apply(points))
+            self.local_map.remove_distant_voxels(pose)
+        else:
+            self.prev_points = pose.apply(points)
+
+    def get_transform(self, index=-1):
+        return self.state["transforms"][index]
 
     def get_deviation(self):
         return np.sqrt(self.deviations_2_sum / self.deviations_count)
