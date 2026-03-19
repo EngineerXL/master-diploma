@@ -9,6 +9,7 @@ from .voxelize import voxelize
 from .icp import align_point_clouds_icp
 from scipy.spatial.transform import RigidTransform
 from .cloud_processing import remove_distant_points
+from .local_map import VoxelMap
 
 
 class LidarOdometryActor:
@@ -21,13 +22,14 @@ class LidarOdometryActor:
 
     def __init__(self, config: dict, initial_velocities: np.ndarray = np.zeros(6)):
         self.parse_config(config)
-        self._local_map = None
-        self._prev_stamp = None
         self._initial_guess = None
-        self._state = None
+        self.state = {"transforms": []}
+        self.local_map = VoxelMap(
+            self.voxel_size,
+            self.points_max_distance_r_max,
+            self.max_points_per_voxel_N_max,
+        )
         self.set_current_velocities(initial_velocities)
-        initial_transform = RigidTransform.from_exp_coords(self._velocities)
-        self.update_initial_guess(initial_transform)
         # Set initial deviation
         self.deviations_2_sum = np.square(
             self.initial_max_correspondance_distance_tau_0
@@ -47,6 +49,7 @@ class LidarOdometryActor:
         ]
         self.factor_voxel_size_map_merge = config["factor_voxel_size_map_merge"]
         self.factor_voxel_size_registration = config["factor_voxel_size_registration"]
+        self.max_points_per_voxel_N_max = config["max_points_per_voxel_N_max"]
 
     def process_lidar_cloud(self, points: np.ndarray, timestamp: float) -> None:
         """Process a LiDAR frame.
@@ -62,68 +65,68 @@ class LidarOdometryActor:
         timestamp : float
             Frame timestamp in seconds.
         """
-        if self._local_map is None:
-            # First frame: register as initial map and return early
-            self.register_points_to_map(points)
-            self._prev_stamp = timestamp
-            return
-
-        # Pre-filter current points by removing distant outliers
-        preprocessed_points = self.preprocess_cloud(points)
-
         # Voxelize current points for efficient ICP matching
         points_merge = voxelize(
-            preprocessed_points, self.factor_voxel_size_map_merge * self.voxel_size
+            points, self.factor_voxel_size_map_merge * self.voxel_size
         )
+
+        if len(self.state["transforms"]) == 0:
+            # First frame: register as initial map and return early
+            self.local_map.add_points(points_merge)
+            self.state["prev_timestamp"] = timestamp
+            self.state["transforms"].append(RigidTransform.identity())
+            self.prev_cloud = points_merge
+            return
+
         points_reduced = voxelize(
             points_merge, self.factor_voxel_size_registration * self.voxel_size
         )
 
+        dt = timestamp - self.state["prev_timestamp"]
+        t_prev = self.state["transforms"][-1]
+        t_pred = self.get_initial_guess(dt)
+        points_global = (t_prev * t_pred).apply(points_reduced)
+
         # Run ICP alignment to compute transformation between frames
-        transform, info = align_point_clouds_icp(
-            points_reduced,
-            self.get_local_map(),
-            init_transform=self.get_initial_guess(),
+        t_icp, info = align_point_clouds_icp(
+            points_global,
+            self.prev_cloud,
+            # self.local_map.get_points(),
             max_iterations=self.icp_max_iterations,
             displacement_deviation_sigma_t=self.get_deviation(),
             tolerance_gamma=self.tolerance_gamma,
         )
 
+        t_cur = t_icp * (t_prev * t_pred)
+        pose_deviation_delta_t = (t_prev * t_pred).inv() * t_icp * (t_prev * t_pred)
+
         # Store ICP information in state
-        self._state = {"icp_info": info}
+        self.state["icp_info"] = info
+
         # Save the computed transformation as initial guess for next iteration
-        self.update_initial_guess(transform)
-        self.update_deviation(transform)
+        self.update_initial_guess(t_cur)
+        self.update_deviation(pose_deviation_delta_t)
+        # self.local_map.add_points(t_cur.apply(points_merge))
+        # self.local_map.remove_distant_voxels(t_cur)
+        self.prev_cloud = t_cur.apply(points)
 
-        # Compute velocity from transformation delta and time difference
-        dt = timestamp - self._prev_stamp
-        self._velocities = transform.as_exp_coords() / dt
-
-        # Register original (unfiltered) points to the local map
-        self.register_points_to_map(points)
-        self._prev_stamp = timestamp
-
-    def get_local_map(self) -> np.ndarray:
-        """Get the local map point cloud."""
-        return self._local_map
-
-    def register_points_to_map(self, points: np.ndarray) -> None:
-        """Register a point cloud as the new local map."""
-        self._local_map = points
+        # Compute velocity from relative transformation and time difference
+        t_relative = t_prev.inv() * t_cur
+        self.state["velocities"] = t_relative.as_exp_coords() / dt
+        self.state["prev_timestamp"] = timestamp
 
     def swap_v_and_w(self, velocities: np.ndarray) -> np.ndarray:
         """Reorder velocities from scipy [wx, wy, wz, vx, vy, vz] to [vx, vy, vz, wx, wy, wz]."""
         return np.concatenate([velocities[3:6], velocities[0:3]])
 
-    def preprocess_cloud(self, points: np.ndarray) -> np.ndarray:
-        """Remove distant outliers from a point cloud."""
-        return remove_distant_points(points, self.points_max_distance_r_max)
-
-    def get_initial_guess(self):
-        return self.initial_guess
+    def get_initial_guess(self, dt: float):
+        if len(self.state["transforms"]) >= 2:
+            return self.state["transforms"][-2].inv() * self.state["transforms"][-1]
+        else:
+            return RigidTransform.from_exp_coords(self.state["velocities"] * dt)
 
     def update_initial_guess(self, transform: RigidTransform):
-        self.initial_guess = transform
+        self.state["transforms"].append(transform)
 
     def get_deviation(self):
         return np.sqrt(self.deviations_2_sum / self.deviations_count)
@@ -144,12 +147,12 @@ class LidarOdometryActor:
 
     def set_current_velocities(self, velocities: np.ndarray) -> None:
         """Set velocities from an external source."""
-        self._velocities = self.swap_v_and_w(velocities)
+        self.velocities = self.swap_v_and_w(velocities)
 
     def get_current_velocities(self) -> np.ndarray:
         """Get current velocity estimates [vx, vy, vz, wx, wy, wz]."""
-        return self.swap_v_and_w(self._velocities)
+        return self.swap_v_and_w(self.velocities)
 
     def get_state(self) -> dict | None:
         """Get the state dictionary."""
-        return self._state
+        return self.state

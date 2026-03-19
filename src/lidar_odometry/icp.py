@@ -50,8 +50,8 @@ def build_correspondances(
 def align_point_clouds_icp(
     source: np.ndarray,
     target: np.ndarray,
-    init_transform=None,
-    displacement_deviation_sigma_t: float = 0.1,
+    displacement_deviation_sigma_t: float,
+    init_transform: RigidTransform = RigidTransform.identity(),
     max_correspondence_distance_tau_t: float | None = None,
     max_iterations: int = 50,
     tolerance_gamma: float = 1e-4,
@@ -61,10 +61,7 @@ def align_point_clouds_icp(
     target = target.astype(np.float64)
 
     # Initialize transform
-    if init_transform is None:
-        transform = RigidTransform.identity()
-    else:
-        transform = init_transform
+    transform = init_transform
 
     # 3 sigma rule
     if max_correspondence_distance_tau_t is None:
