@@ -7,7 +7,8 @@
         "tolerance_gamma": 1e-4,
         "initial_max_correspondance_distance_tau_0": 2,
         "factor_voxel_size_map_merge": 0.5,
-        "factor_voxel_size_registration": 1.5
+        "factor_voxel_size_registration": 1.5,
+        "max_points_per_voxel_N_max" : 20
     },
     "wrapper_settings": {
         "truck_initial_x": -7.5,
@@ -19,7 +20,7 @@
         {
             "ride_id": "boreas-2021-05-06-13-19",
             "ride_frame_st": 200,
-            "ride_frame_en": 250
+            "ride_frame_en": 500
         }
     ]
 }

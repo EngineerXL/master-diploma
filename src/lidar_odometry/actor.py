@@ -72,7 +72,7 @@ class LidarOdometryActor:
 
         if len(self.state["transforms"]) == 0:
             # First frame: register as initial map and return early
-            self.local_map.add_points(points_merge)
+            # self.local_map.add_points(points_merge)
             self.state["prev_timestamp"] = timestamp
             self.state["transforms"].append(RigidTransform.identity())
             self.prev_cloud = points_merge
@@ -147,12 +147,12 @@ class LidarOdometryActor:
 
     def set_current_velocities(self, velocities: np.ndarray) -> None:
         """Set velocities from an external source."""
-        self.velocities = self.swap_v_and_w(velocities)
+        self.state["velocities"] = self.swap_v_and_w(velocities)
 
     def get_current_velocities(self) -> np.ndarray:
         """Get current velocity estimates [vx, vy, vz, wx, wy, wz]."""
-        return self.swap_v_and_w(self.velocities)
+        return self.swap_v_and_w(self.state["velocities"])
 
-    def get_state(self) -> dict | None:
+    def get_state(self) -> dict:
         """Get the state dictionary."""
         return self.state

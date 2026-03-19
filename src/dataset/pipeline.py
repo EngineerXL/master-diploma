@@ -126,7 +126,7 @@ class LidarOdometryPipeline:
             }
 
             actor_state = self.actor.get_state()
-            if actor_state is not None:
+            if "icp_info" in actor_state:
                 result["estimate"]["iterations"] = actor_state["icp_info"]["iterations"]
                 result["estimate"]["converged"] = actor_state["icp_info"]["converged"]
 
