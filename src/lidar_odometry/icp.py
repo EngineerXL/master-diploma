@@ -51,8 +51,8 @@ def align_point_clouds_icp(
     source: np.ndarray,
     target: np.ndarray,
     displacement_deviation_sigma_t: float,
+    max_correspondence_distance_tau_t: float,
     init_transform: RigidTransform = RigidTransform.identity(),
-    max_correspondence_distance_tau_t: float | None = None,
     max_iterations: int = 50,
     tolerance_gamma: float = 1e-4,
 ):
@@ -62,10 +62,6 @@ def align_point_clouds_icp(
 
     # Initialize transform
     transform = init_transform
-
-    # 3 sigma rule
-    if max_correspondence_distance_tau_t is None:
-        max_correspondence_distance_tau_t = 3 * displacement_deviation_sigma_t
 
     # Build KD-tree on target for efficient nearest neighbor search
     target_tree = cKDTree(target)
@@ -95,6 +91,7 @@ def align_point_clouds_icp(
     return transform, {
         "iterations": iterations,
         "converged": bool(converged),
+        "tau_t": max_correspondence_distance_tau_t,
     }
 
 

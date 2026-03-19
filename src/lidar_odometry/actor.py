@@ -30,10 +30,8 @@ class LidarOdometryActor:
         )
         self.set_current_velocities(initial_velocities)
         # Set initial deviation
-        self.deviations_2_sum = np.square(
-            self.initial_max_correspondance_distance_tau_0
-        )
-        self.deviations_count = 1
+        self.deviations_2_sum = 0
+        self.deviations_count = 0
 
     def parse_config(self, config: dict):
         self.voxel_size = config["voxel_size"]
@@ -86,12 +84,17 @@ class LidarOdometryActor:
         t_pred = self.get_initial_guess(dt)
         points_global = (t_prev * t_pred).apply(points_reduced)
 
+        displacement_deviation_sigma_t, max_correspondence_distance_tau_t = (
+            self.get_deviation()
+        )
+
         # Run ICP alignment to compute transformation between frames
         t_icp, info = align_point_clouds_icp(
             points_global,
             self.get_local_map_points(),
             max_iterations=self.icp_max_iterations,
-            displacement_deviation_sigma_t=self.get_deviation(),
+            displacement_deviation_sigma_t=displacement_deviation_sigma_t,
+            max_correspondence_distance_tau_t=max_correspondence_distance_tau_t,
             tolerance_gamma=self.tolerance_gamma,
         )
 
@@ -141,7 +144,13 @@ class LidarOdometryActor:
         return self.state["transforms"][index]
 
     def get_deviation(self):
-        return np.sqrt(self.deviations_2_sum / self.deviations_count)
+        # 3 sigma rule
+        if self.deviations_count > 0:
+            sigma = np.sqrt(self.deviations_2_sum / self.deviations_count)
+            return sigma, 3 * sigma
+        else:
+            tau = self.initial_max_correspondance_distance_tau_0
+            return tau / 3, tau
 
     def calculate_deviations_from_tf(self, transform: RigidTransform):
         t, rot = transform.as_components()
