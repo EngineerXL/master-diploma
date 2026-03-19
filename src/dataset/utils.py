@@ -1,7 +1,11 @@
 from math import pi
 from pyboreas import BoreasDataset
 import numpy as np
-from src.geometry.add_obstacle import remove_points_by_obstacle_bbox_2d,DEFAULT_TRUCK_OFFSET, DEFAULT_FORD_TRANSIT_VAN_DIMS
+from src.geometry.add_obstacle import (
+    remove_points_by_obstacle_bbox_2d,
+    DEFAULT_TRUCK_OFFSET,
+    DEFAULT_FORD_TRANSIT_VAN_DIMS,
+)
 
 DATASET_ROOT = "/data/boreas"
 
@@ -19,10 +23,11 @@ class LidarOdometryWrapper:
         ride_id: str,
         dataset_root: str = DATASET_ROOT,
         rotation_angle: float = pi / 4,
-        truck_dims: np.ndarray | None = DEFAULT_FORD_TRANSIT_VAN_DIMS,
+        truck_dims: np.ndarray = DEFAULT_FORD_TRANSIT_VAN_DIMS,
         truck_offset: np.ndarray = DEFAULT_TRUCK_OFFSET,
-        truck_initial_x: float = -7.5,  # truck will traverse 15 meters forward
+        truck_initial_x: float = -7.5,  # truck will traverse vx * frames * 0.1 meters forward
         truck_overtake_vx: float = 1,
+        simulate_truck: bool = True,
     ) -> None:
         """
         Initialize the LidarOdometryWrapper.
@@ -35,6 +40,8 @@ class LidarOdometryWrapper:
             Root path to the BOREAS dataset (default: DATASET_ROOT)
         rotation_angle : float
             Rotation angle in radians around z-axis (default: pi/4)
+        simulate_truck : bool
+            Whether to add truck obstacle to lidar point cloud (default: True)
         """
         self.dataset = BoreasDataset(dataset_root)
         if ride_id not in self.dataset.seqDict.keys():
@@ -55,6 +62,7 @@ class LidarOdometryWrapper:
         self.truck_offset = truck_offset
         self.truck_initial_x = truck_initial_x
         self.truck_overtake_vx = truck_overtake_vx
+        self.simulate_truck = simulate_truck
         self.first_timestamp = None
 
     def set_first_frame(self, index: int):
@@ -80,6 +88,9 @@ class LidarOdometryWrapper:
         rotated_points = points @ self._rotation_matrix
         return rotated_points
 
+    def get_frames_count(self):
+        return len(self.seq.lidar_frames)
+
     def get_frame(self, index: int) -> tuple:
         lidar_frame = self.seq.get_lidar(index)
 
@@ -90,7 +101,7 @@ class LidarOdometryWrapper:
 
         rotated_points = self.rotate_points(raw_points)
 
-        if self.truck_dims is not None:
+        if self.simulate_truck:
             frame_offset = DEFAULT_TRUCK_OFFSET
             if self.first_timestamp is None:
                 raise RuntimeError(

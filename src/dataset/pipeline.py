@@ -70,8 +70,9 @@ class LidarOdometryPipeline:
     def _get_wrapper(self) -> LidarOdometryWrapper:
         wrapper = LidarOdometryWrapper(
             ride_id=self.ride_info["ride_id"],
-            truck_initial_x=self.wrapper_settings["truck_initial_x"],
-            truck_overtake_vx=self.wrapper_settings["truck_overtake_vx"],
+            truck_initial_x=self.wrapper_settings.get("truck_initial_x", -7.5),
+            truck_overtake_vx=self.wrapper_settings.get("truck_overtake_vx", 1),
+            simulate_truck=self.wrapper_settings.get("simulate_truck", False),
         )
         return wrapper
 
