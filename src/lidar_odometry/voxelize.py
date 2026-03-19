@@ -1,9 +1,9 @@
 import numpy as np
 
 
-def get_voxel(point: np.ndarray, voxel_size: float) -> np.ndarray:
+def get_voxel(point: np.ndarray, voxel_size: float, dtype=np.int64) -> np.ndarray:
     """Convert 3D point to discrete voxel coordinates."""
-    return np.floor(point / voxel_size).astype(np.int64)
+    return np.floor(point / voxel_size).astype(dtype)
 
 
 def voxelize(points: np.ndarray, voxel_size: float) -> np.ndarray:
