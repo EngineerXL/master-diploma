@@ -9,6 +9,7 @@ from .voxelize import voxelize
 from .icp import align_point_clouds_icp
 from scipy.spatial.transform import RigidTransform
 from .local_map import VoxelMap
+from .kalman_filter import ConstVelocityKalmanFilter
 
 
 class LidarOdometryActor:
@@ -28,7 +29,15 @@ class LidarOdometryActor:
             self.points_max_distance_r_max,
             self.max_points_per_voxel_N_max,
         )
-        self.set_current_velocities(initial_velocities)
+        if self.use_kalman_filter:
+            self.kalman_filter = ConstVelocityKalmanFilter(
+                x_init=initial_velocities,
+                linear_process_noise_covariance=self.linear_process_noise_covariance,
+                angular_process_noise_covariance=self.angular_process_noise_covariance,
+                linear_measurement_noise_covariance=self.linear_measurement_noise_covariance,
+                angular_measurement_noise_covariance=self.angular_measurement_noise_covariance,
+            )
+        self.update_velocities(self.swap_v_and_w(initial_velocities))
         # Set initial deviation
         self.deviations_2_sum = 0
         self.deviations_count = 0
@@ -48,6 +57,22 @@ class LidarOdometryActor:
         self.factor_voxel_size_registration = config["factor_voxel_size_registration"]
         self.max_points_per_voxel_N_max = config["max_points_per_voxel_N_max"]
         self.use_local_map = config["use_local_map"]
+
+        kalman_config = config["kalman_filter_settings"]
+        self.use_kalman_filter = kalman_config["use"]
+        if self.use_kalman_filter:
+            self.linear_process_noise_covariance = kalman_config[
+                "linear_process_noise_covariance"
+            ]
+            self.angular_process_noise_covariance = kalman_config[
+                "angular_process_noise_covariance"
+            ]
+            self.linear_measurement_noise_covariance = kalman_config[
+                "linear_measurement_noise_covariance"
+            ]
+            self.angular_measurement_noise_covariance = kalman_config[
+                "angular_measurement_noise_covariance"
+            ]
 
     def process_lidar_cloud(self, points: np.ndarray, timestamp: float) -> None:
         """Process a LiDAR frame.
@@ -109,20 +134,20 @@ class LidarOdometryActor:
         self.update_deviation(pose_deviation_delta_t)
         self.update_local_map(points_merge, t_cur)
 
-        # Compute velocity from relative transformation and time difference
-        t_relative = t_prev.inv() * t_cur
-        self.state["velocities"] = t_relative.as_exp_coords() / dt
+        self.update_velocities(self.calculate_velocities(dt))
         self.state["prev_timestamp"] = timestamp
 
     def swap_v_and_w(self, velocities: np.ndarray) -> np.ndarray:
         """Reorder velocities from scipy [wx, wy, wz, vx, vy, vz] to [vx, vy, vz, wx, wy, wz]."""
         return np.concatenate([velocities[3:6], velocities[0:3]])
 
+    def calculate_velocities(self, dt: float):
+        # Compute velocity from relative transformation and time difference
+        t_relative = self.get_transform(-2).inv() * self.get_transform(-1)
+        return t_relative.as_exp_coords() / dt
+
     def get_initial_guess(self, dt: float):
-        if len(self.state["transforms"]) >= 2:
-            return self.get_transform(-2).inv() * self.get_transform(-1)
-        else:
-            return RigidTransform.from_exp_coords(self.state["velocities"] * dt)
+        return RigidTransform.from_exp_coords(self.state["velocities"] * dt)
 
     def update_initial_guess(self, transform: RigidTransform):
         self.state["transforms"].append(transform)
@@ -166,9 +191,13 @@ class LidarOdometryActor:
             self.deviations_2_sum += np.square(cur_delta_upper_bound)
             self.deviations_count += 1
 
-    def set_current_velocities(self, velocities: np.ndarray) -> None:
-        """Set velocities from an external source."""
-        self.state["velocities"] = self.swap_v_and_w(velocities)
+    def update_velocities(self, velocities: np.ndarray) -> None:
+        if self.use_kalman_filter:
+            self.kalman_filter.predict()
+            self.kalman_filter.update(self.swap_v_and_w(velocities))
+            self.state["velocities"] = self.swap_v_and_w(self.kalman_filter.x)
+        else:
+            self.state["velocities"] = velocities
 
     def get_current_velocities(self) -> np.ndarray:
         """Get current velocity estimates [vx, vy, vz, wx, wy, wz]."""
