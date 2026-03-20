@@ -148,14 +148,16 @@ class PostprocessingWrapper:
             # Calculate metrics
             rmse = np.sqrt(np.mean(errors[field] ** 2))
             mean_err = np.mean(errors[field])
+            std = np.std(errors[field])
             q95_abs = np.quantile(np.abs(errors[field]), 0.95)
             mae = np.mean(np.abs(errors[field]))
 
             metrics[field] = {
-                "RMSE": rmse,
                 "mean": mean_err,
+                "std": std,
                 "q95_abs": q95_abs,
                 "MAE": mae,
+                "RMSE": rmse,
             }
 
         # Create DataFrame with metric types as rows and velocity components as columns
