@@ -12,10 +12,21 @@ class ConstVelocityKalmanFilter:
     def __init__(
         self,
         x_init,
+        # Assume car mena acceleration is 1 m/s2
+        # Velocity can change by 0.1 m/s per 0.1 sec
+        # covariance is 0.1^2 = 0.01
         linear_process_noise_covariance=0.01,
-        angular_process_noise_covariance=0.1,
-        linear_measurement_noise_covariance=0.25,
-        angular_measurement_noise_covariance=0.01,
+        # Alpha Prime Lidar has 3 cm accuracy
+        # https://visimind.com/wp-content/uploads/pdf/table_with_sensors.pdf
+        # 0.03 m is divided by 0.1 sec, linear velocity accuracy is 0.3 m/s
+        # covariance is 0.3^2 = 0.09
+        angular_process_noise_covariance=0.09,
+        linear_measurement_noise_covariance=0.01,
+        # Let's take point at 100 meter range, and accuracy 3 cm
+        # Then angle is 0.03 / 100 = 3e-4 radians
+        # 3e-4 is divided by 0.1 sec, angular velocity accuracy is 3e-3 m/s
+        # covariance is 3e-3^2 = 9e-6
+        angular_measurement_noise_covariance=9e-6,
     ):
         """
         Initialize the Kalman filter.
