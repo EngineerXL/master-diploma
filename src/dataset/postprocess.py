@@ -121,6 +121,15 @@ class PostprocessingWrapper:
                 errors[field] = np.concatenate([errors[field], err_part])
         return errors
 
+    def find_velocity_outlier_ride(self, field: str, threshold: float) -> list:
+        outliers = []
+        for id, path in enumerate(self.bag_paths):
+            errors = self.get_velocity_errors(id)
+            max_abs_err = np.max(np.abs(errors[field]))
+            if max_abs_err > threshold:
+                outliers.append((id, path))
+        return outliers
+
     def get_velocity_metrics(self, ride_segment_id: int | None = None) -> pd.DataFrame:
         """
         Calculate velocity metrics (RMSE, mean, stddev, MAE) for each velocity component.
