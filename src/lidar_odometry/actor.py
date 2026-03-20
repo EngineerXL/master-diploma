@@ -147,7 +147,7 @@ class LidarOdometryActor:
         return t_relative.as_exp_coords() / dt
 
     def get_initial_guess(self, dt: float):
-        return RigidTransform.from_exp_coords(self.state["velocities"] * dt)
+        return RigidTransform.from_exp_coords(self.state["model_velocities"] * dt)
 
     def update_initial_guess(self, transform: RigidTransform):
         self.state["transforms"].append(transform)
@@ -195,13 +195,14 @@ class LidarOdometryActor:
         if self.use_kalman_filter:
             self.kalman_filter.predict()
             self.kalman_filter.update(self.swap_v_and_w(velocities))
-            self.state["velocities"] = self.swap_v_and_w(self.kalman_filter.x)
+            self.state["model_velocities"] = self.swap_v_and_w(self.kalman_filter.x)
         else:
-            self.state["velocities"] = velocities
+            self.state["model_velocities"] = velocities
+        self.state["output_velocities"] = self.swap_v_and_w(velocities)
 
     def get_current_velocities(self) -> np.ndarray:
         """Get current velocity estimates [vx, vy, vz, wx, wy, wz]."""
-        return self.swap_v_and_w(self.state["velocities"])
+        return self.state["output_velocities"]
 
     def get_state(self) -> dict:
         """Get the state dictionary."""
