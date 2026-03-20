@@ -1,6 +1,7 @@
 from math import pi
 from pyboreas import BoreasDataset
 import numpy as np
+from scipy.spatial.transform import Rotation
 from src.geometry.add_obstacle import (
     remove_points_by_obstacle_bbox_2d,
     DEFAULT_TRUCK_OFFSET,
@@ -52,11 +53,7 @@ class LidarOdometryWrapper:
 
         # Rotation matrix for rotation around z-axis
         self.rotation_angle = rotation_angle
-        cos_theta = np.cos(self.rotation_angle)
-        sin_theta = np.sin(self.rotation_angle)
-        self._rotation_matrix = np.array(
-            [[cos_theta, -sin_theta, 0], [sin_theta, cos_theta, 0], [0, 0, 1]]
-        )
+        self.rotation = Rotation.from_euler("z", -self.rotation_angle)
 
         self.truck_dims = truck_dims
         self.truck_offset = truck_offset
@@ -85,7 +82,7 @@ class LidarOdometryWrapper:
         """
 
         # Apply rotation to each point
-        rotated_points = points @ self._rotation_matrix
+        rotated_points = self.rotation.apply(points)
         return rotated_points
 
     def get_frames_count(self):
@@ -121,17 +118,15 @@ class LidarOdometryWrapper:
             lidar_frame.body_rate
         )  # 6x1 vel in sensor frame [vx, vy, vz, wx, wy, wz]
 
-        # Apply rotation to linear velocities
-        v_rotated = self._rotation_matrix.T @ varpi[:3]
-        # Apply rotation to angular velocities
-        w_rotated = self._rotation_matrix.T @ varpi[3:]
+        velocities = np.concat([varpi[:3].T, varpi[3:].T])
 
-        velocities = np.concatenate([v_rotated, w_rotated])
+        # Apply rotation to linear velocities and angular velocities
+        rotated_velocities = self.rotate_points(velocities)
 
         # Unload to free memory
         lidar_frame.unload_data()
 
-        return timestamp, output_points, velocities.reshape(6)
+        return timestamp, output_points, rotated_velocities.reshape(6)
 
     def get_current_rotation_matrix(self) -> np.ndarray:
         """
