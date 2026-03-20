@@ -156,6 +156,7 @@ def plot_lidar_clouds_animation(
 
         ax2d.set_xlim(y_low, y_high)
         ax2d.set_ylim(x_low, x_high)
+        ax2d.invert_xaxis()
 
         # Convert the figure to a PIL Image using BytesIO
         buf = io.BytesIO()
