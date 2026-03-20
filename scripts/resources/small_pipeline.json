@@ -9,14 +9,21 @@
         "factor_voxel_size_map_merge": 0.5,
         "factor_voxel_size_registration": 1.5,
         "max_points_per_voxel_N_max": 20,
-        "use_local_map": false
+        "use_local_map": false,
+        "kalman_filter_settings": {
+            "use": true,
+            "linear_process_noise_covariance": 0.01,
+            "linear_measurement_noise_covariance": 0.09,
+            "angular_process_noise_covariance": 0.01,
+            "angular_measurement_noise_covariance": 9e-6
+        }
     },
     "wrapper_settings": {
         "truck_initial_x": -12.5,
         "truck_overtake_vx": 1,
         "simulate_truck": true
     },
-    "config_name": "small",
+    "config_name": "small_kalman",
     "ride_segments": [
         {
             "ride_id": "boreas-2021-05-06-13-19",
