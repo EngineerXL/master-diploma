@@ -8,3 +8,5 @@ aws s3 sync s3://boreas/boreas-2025-02-15-17-19 $root/boreas-2025-02-15-17-19 --
 aws s3 sync s3://boreas/boreas-2024-12-04-15-19 $root/boreas-2024-12-04-15-19 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
 aws s3 sync s3://boreas/boreas-2024-12-04-12-34 $root/boreas-2024-12-04-12-34 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
 aws s3 sync s3://boreas/boreas-2024-12-23-16-44 $root/boreas-2024-12-23-16-44 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
+aws s3 sync s3://boreas/boreas-2025-07-18-15-30 $root/boreas-2025-07-18-15-30 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
+aws s3 sync s3://boreas/boreas-2025-08-13-09-01 $root/boreas-2025-08-13-09-01 --exclude "*"  --include "lidar/*" --include "imu/*" --include "applanix/*" --include "calib/*" --no-sign-request
