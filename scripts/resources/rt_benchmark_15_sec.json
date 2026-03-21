@@ -1,0 +1,2435 @@
+{
+    "actor_settings": {
+        "voxel_size": 0.5,
+        "points_max_distance_r_max": 50,
+        "min_deviation_distance_delta_min": 0.1,
+        "icp_max_iterations": 200,
+        "tolerance_gamma": 1e-4,
+        "initial_max_correspondance_distance_tau_0": 1,
+        "factor_voxel_size_map_merge": 0.5,
+        "factor_voxel_size_registration": 1.5,
+        "max_points_per_voxel_N_max": 20,
+        "use_local_map": false,
+        "kalman_filter_settings": {
+            "use": false
+        }
+    },
+    "wrapper_settings": {
+        "truck_initial_x": -7.5,
+        "truck_overtake_vx": 1,
+        "simulate_truck": true
+    },
+    "config_name": "rt_benchmark_15_sec",
+    "ride_segments": [
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 5550,
+            "ride_frame_en": 5700
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 5700,
+            "ride_frame_en": 5850
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 5850,
+            "ride_frame_en": 6000
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6000,
+            "ride_frame_en": 6150
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6150,
+            "ride_frame_en": 6300
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6300,
+            "ride_frame_en": 6450
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6450,
+            "ride_frame_en": 6600
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6600,
+            "ride_frame_en": 6750
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6750,
+            "ride_frame_en": 6900
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 6900,
+            "ride_frame_en": 7050
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7050,
+            "ride_frame_en": 7200
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7200,
+            "ride_frame_en": 7350
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7350,
+            "ride_frame_en": 7500
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7500,
+            "ride_frame_en": 7650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7650,
+            "ride_frame_en": 7800
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7800,
+            "ride_frame_en": 7950
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 7950,
+            "ride_frame_en": 8100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 8100,
+            "ride_frame_en": 8250
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 8250,
+            "ride_frame_en": 8400
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 8400,
+            "ride_frame_en": 8550
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 8550,
+            "ride_frame_en": 8700
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 8700,
+            "ride_frame_en": 8850
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 5550,
+            "ride_frame_en": 5700
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 5700,
+            "ride_frame_en": 5850
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 5850,
+            "ride_frame_en": 6000
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6000,
+            "ride_frame_en": 6150
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6150,
+            "ride_frame_en": 6300
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6300,
+            "ride_frame_en": 6450
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6450,
+            "ride_frame_en": 6600
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6600,
+            "ride_frame_en": 6750
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6750,
+            "ride_frame_en": 6900
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 6900,
+            "ride_frame_en": 7050
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7050,
+            "ride_frame_en": 7200
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7200,
+            "ride_frame_en": 7350
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7350,
+            "ride_frame_en": 7500
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7500,
+            "ride_frame_en": 7650
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7650,
+            "ride_frame_en": 7800
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7800,
+            "ride_frame_en": 7950
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 7950,
+            "ride_frame_en": 8100
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 8100,
+            "ride_frame_en": 8250
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 8250,
+            "ride_frame_en": 8400
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 8400,
+            "ride_frame_en": 8550
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 8550,
+            "ride_frame_en": 8700
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 8700,
+            "ride_frame_en": 8850
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 8850,
+            "ride_frame_en": 9000
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9000,
+            "ride_frame_en": 9150
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9150,
+            "ride_frame_en": 9300
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9300,
+            "ride_frame_en": 9450
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9450,
+            "ride_frame_en": 9600
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9600,
+            "ride_frame_en": 9750
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9750,
+            "ride_frame_en": 9900
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 9900,
+            "ride_frame_en": 10050
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 10050,
+            "ride_frame_en": 10200
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 10200,
+            "ride_frame_en": 10350
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 10350,
+            "ride_frame_en": 10500
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 10500,
+            "ride_frame_en": 10650
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 10650,
+            "ride_frame_en": 10800
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 10800,
+            "ride_frame_en": 10950
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 5550,
+            "ride_frame_en": 5700
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 5700,
+            "ride_frame_en": 5850
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 5850,
+            "ride_frame_en": 6000
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6000,
+            "ride_frame_en": 6150
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6150,
+            "ride_frame_en": 6300
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6300,
+            "ride_frame_en": 6450
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6450,
+            "ride_frame_en": 6600
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6600,
+            "ride_frame_en": 6750
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6750,
+            "ride_frame_en": 6900
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 6900,
+            "ride_frame_en": 7050
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7050,
+            "ride_frame_en": 7200
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7200,
+            "ride_frame_en": 7350
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7350,
+            "ride_frame_en": 7500
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7500,
+            "ride_frame_en": 7650
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7650,
+            "ride_frame_en": 7800
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7800,
+            "ride_frame_en": 7950
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 7950,
+            "ride_frame_en": 8100
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 8100,
+            "ride_frame_en": 8250
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 8250,
+            "ride_frame_en": 8400
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 8400,
+            "ride_frame_en": 8550
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 8550,
+            "ride_frame_en": 8700
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 8700,
+            "ride_frame_en": 8850
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 8850,
+            "ride_frame_en": 9000
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 9000,
+            "ride_frame_en": 9150
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 5550,
+            "ride_frame_en": 5700
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 5700,
+            "ride_frame_en": 5850
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 5850,
+            "ride_frame_en": 6000
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6000,
+            "ride_frame_en": 6150
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6150,
+            "ride_frame_en": 6300
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6300,
+            "ride_frame_en": 6450
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6450,
+            "ride_frame_en": 6600
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6600,
+            "ride_frame_en": 6750
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6750,
+            "ride_frame_en": 6900
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 6900,
+            "ride_frame_en": 7050
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7050,
+            "ride_frame_en": 7200
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7200,
+            "ride_frame_en": 7350
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7350,
+            "ride_frame_en": 7500
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7500,
+            "ride_frame_en": 7650
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7650,
+            "ride_frame_en": 7800
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7800,
+            "ride_frame_en": 7950
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 7950,
+            "ride_frame_en": 8100
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 8100,
+            "ride_frame_en": 8250
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 8250,
+            "ride_frame_en": 8400
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 8400,
+            "ride_frame_en": 8550
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 8550,
+            "ride_frame_en": 8700
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 8700,
+            "ride_frame_en": 8850
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 8850,
+            "ride_frame_en": 9000
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 9000,
+            "ride_frame_en": 9150
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 9150,
+            "ride_frame_en": 9300
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 9300,
+            "ride_frame_en": 9450
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 5550,
+            "ride_frame_en": 5700
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 5700,
+            "ride_frame_en": 5850
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 5850,
+            "ride_frame_en": 6000
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6000,
+            "ride_frame_en": 6150
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6150,
+            "ride_frame_en": 6300
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6300,
+            "ride_frame_en": 6450
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6450,
+            "ride_frame_en": 6600
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6600,
+            "ride_frame_en": 6750
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6750,
+            "ride_frame_en": 6900
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 6900,
+            "ride_frame_en": 7050
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7050,
+            "ride_frame_en": 7200
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7200,
+            "ride_frame_en": 7350
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7350,
+            "ride_frame_en": 7500
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7500,
+            "ride_frame_en": 7650
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7650,
+            "ride_frame_en": 7800
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7800,
+            "ride_frame_en": 7950
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 7950,
+            "ride_frame_en": 8100
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 8100,
+            "ride_frame_en": 8250
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 8250,
+            "ride_frame_en": 8400
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 0,
+            "ride_frame_en": 150
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 150,
+            "ride_frame_en": 300
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 300,
+            "ride_frame_en": 450
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 450,
+            "ride_frame_en": 600
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 600,
+            "ride_frame_en": 750
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 750,
+            "ride_frame_en": 900
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1050
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1050,
+            "ride_frame_en": 1200
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1200,
+            "ride_frame_en": 1350
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1350,
+            "ride_frame_en": 1500
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1500,
+            "ride_frame_en": 1650
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1650,
+            "ride_frame_en": 1800
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1800,
+            "ride_frame_en": 1950
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 1950,
+            "ride_frame_en": 2100
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 2100,
+            "ride_frame_en": 2250
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 2250,
+            "ride_frame_en": 2400
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 2400,
+            "ride_frame_en": 2550
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 2550,
+            "ride_frame_en": 2700
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 2700,
+            "ride_frame_en": 2850
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 2850,
+            "ride_frame_en": 3000
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3000,
+            "ride_frame_en": 3150
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3150,
+            "ride_frame_en": 3300
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3300,
+            "ride_frame_en": 3450
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3450,
+            "ride_frame_en": 3600
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3600,
+            "ride_frame_en": 3750
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3750,
+            "ride_frame_en": 3900
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 3900,
+            "ride_frame_en": 4050
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4050,
+            "ride_frame_en": 4200
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4200,
+            "ride_frame_en": 4350
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4350,
+            "ride_frame_en": 4500
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4500,
+            "ride_frame_en": 4650
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4650,
+            "ride_frame_en": 4800
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4800,
+            "ride_frame_en": 4950
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 4950,
+            "ride_frame_en": 5100
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 5100,
+            "ride_frame_en": 5250
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 5250,
+            "ride_frame_en": 5400
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 5400,
+            "ride_frame_en": 5550
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 5550,
+            "ride_frame_en": 5700
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 5700,
+            "ride_frame_en": 5850
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 5850,
+            "ride_frame_en": 6000
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6000,
+            "ride_frame_en": 6150
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6150,
+            "ride_frame_en": 6300
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6300,
+            "ride_frame_en": 6450
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6450,
+            "ride_frame_en": 6600
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6600,
+            "ride_frame_en": 6750
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6750,
+            "ride_frame_en": 6900
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 6900,
+            "ride_frame_en": 7050
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7050,
+            "ride_frame_en": 7200
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7200,
+            "ride_frame_en": 7350
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7350,
+            "ride_frame_en": 7500
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7500,
+            "ride_frame_en": 7650
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7650,
+            "ride_frame_en": 7800
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7800,
+            "ride_frame_en": 7950
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 7950,
+            "ride_frame_en": 8100
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 8100,
+            "ride_frame_en": 8250
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 8250,
+            "ride_frame_en": 8400
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 8400,
+            "ride_frame_en": 8550
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 8550,
+            "ride_frame_en": 8700
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 8700,
+            "ride_frame_en": 8850
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 8850,
+            "ride_frame_en": 9000
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9000,
+            "ride_frame_en": 9150
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9150,
+            "ride_frame_en": 9300
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9300,
+            "ride_frame_en": 9450
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9450,
+            "ride_frame_en": 9600
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9600,
+            "ride_frame_en": 9750
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9750,
+            "ride_frame_en": 9900
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 9900,
+            "ride_frame_en": 10050
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 10050,
+            "ride_frame_en": 10200
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 10200,
+            "ride_frame_en": 10350
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 10350,
+            "ride_frame_en": 10500
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 10500,
+            "ride_frame_en": 10650
+        }
+    ]
+}
