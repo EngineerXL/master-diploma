@@ -161,7 +161,12 @@ class PostprocessingWrapper:
                     np.quantile(np.abs(errors[field]), 0.95)
                 )
 
-        return metrics
+        result = dict()
+        for field in VELOCITIES_FIELDS:
+            result[field] = {
+                key: np.array(metrics[field][key]) for key in METRICS_NAMES
+            }
+        return result
 
     def get_ride_avg_metrics_df(
         self, ride_segment_id: int | None = None
@@ -333,6 +338,16 @@ def ttest_related_ride_metrics(
         result[f"{field}_avg_B"] = {
             key: np.mean(metrics_B[field][key]) for key in METRICS_NAMES
         }
+        result[f"{field}_abs_diff"] = {
+            key: np.mean(metrics_A[field][key] - metrics_B[field][key])
+            for key in METRICS_NAMES
+        }
+        result[f"{field}_rel_diff"] = {
+            key: 100
+            * (np.mean(metrics_A[field][key]) - np.mean(metrics_B[field][key]))
+            / np.mean(metrics_A[field][key])
+            for key in METRICS_NAMES
+        }
         result[f"{field}_p_value"] = {
             key: ttest_rel(
                 metrics_A[field][key],
@@ -348,11 +363,15 @@ def ttest_related_ride_metrics(
 
     # Color the p_value row based on confidence_alpha
     def color_pvalue(val):
-        return np.where(
-            val < confidence_alpha,
-            P_VALUE_DEFAULT_STYLE + "color: green;",
-            P_VALUE_DEFAULT_STYLE,
-        )
+        result = []
+        for elem in val:
+            style = P_VALUE_DEFAULT_STYLE
+            if elem < confidence_alpha:
+                style += "color: green;"
+            if alternative != "two-sided" and elem > 1 - confidence_alpha:
+                style += "color: red;"
+            result.append(style)
+        return result
 
     p_value_rows_subset = (
         [f"{field}_p_value" for field in VELOCITIES_FIELDS],
