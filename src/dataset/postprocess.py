@@ -4,6 +4,7 @@ import json
 from typing import Dict, List, Optional
 import matplotlib.pyplot as plt
 from src.dataset.pipeline import DATA_OUTPUT_ROOT
+from scipy.stats import ttest_rel
 
 
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
@@ -117,9 +118,7 @@ class PostprocessingWrapper:
     def get_velocity_errors(
         self, ride_segment_id: int | None = None
     ) -> Dict[str, np.ndarray]:
-        segments = (
-            range(len(self.bag_paths)) if ride_segment_id is None else [ride_segment_id]
-        )
+        segments = range(len(self)) if ride_segment_id is None else [ride_segment_id]
         errors = {field: np.array([]) for field in VELOCITIES_FIELDS}
         for segment in segments:
             data = self.get_velocity_data(segment)
@@ -137,10 +136,12 @@ class PostprocessingWrapper:
                 outliers.append((id, path))
         return outliers
 
+    def __len__(self):
+        """Returns the number of bags in the postprocessing wrapper."""
+        return len(self.bag_paths)
+
     def get_ride_metrics(self, ride_segment_id: int | None = None) -> dict:
-        segments = (
-            range(len(self.bag_paths)) if ride_segment_id is None else [ride_segment_id]
-        )
+        segments = range(len(self)) if ride_segment_id is None else [ride_segment_id]
         metrics = dict()
         for field in VELOCITIES_FIELDS:
             metrics[field] = {key: [] for key in METRICS_NAMES}
@@ -306,3 +307,40 @@ class PostprocessingWrapper:
             print(f"Figure saved to {save_path}")
 
         return fig
+
+
+def ttest_related_ride_metrics(
+    config_A: str,
+    config_B: str,
+    alternative: str = "greater",
+    ride_segment_id: int | None = None,
+    confidence_alpha: float = 0.05,
+) -> pd.DataFrame:
+    wrapper_A = PostprocessingWrapper(config_A)
+    wrapper_B = PostprocessingWrapper(config_B)
+    if wrapper_A.ride_segments != wrapper_B.ride_segments:
+        raise RuntimeError(
+            "Unable to perform related T-test due to different ride segment in configs!"
+        )
+    metrics_A = wrapper_A.get_ride_metrics(ride_segment_id)
+    metrics_B = wrapper_B.get_ride_metrics(ride_segment_id)
+
+    result = dict()
+    for field in VELOCITIES_FIELDS:
+        result[f"{field}_avg_A"] = {
+            key: np.mean(metrics_A[field][key]) for key in METRICS_NAMES
+        }
+        result[f"{field}_avg_B"] = {
+            key: np.mean(metrics_B[field][key]) for key in METRICS_NAMES
+        }
+        result[f"{field}_p_value"] = {
+            key: ttest_rel(
+                metrics_A[field][key],
+                metrics_B[field][key],
+                alternative=alternative,
+            ).pvalue
+            for key in METRICS_NAMES
+        }
+
+    df = pd.DataFrame(result).T
+    return df
