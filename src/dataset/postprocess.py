@@ -343,4 +343,21 @@ def ttest_related_ride_metrics(
         }
 
     df = pd.DataFrame(result).T
-    return df
+
+    P_VALUE_DEFAULT_STYLE = "background-color: black;"
+
+    # Color the p_value row based on confidence_alpha
+    def color_pvalue(val):
+        return np.where(
+            val < confidence_alpha,
+            P_VALUE_DEFAULT_STYLE + "color: green;",
+            P_VALUE_DEFAULT_STYLE,
+        )
+
+    p_value_rows_subset = (
+        [f"{field}_p_value" for field in VELOCITIES_FIELDS],
+        slice(None),
+    )
+    styled_df = df.style.apply(color_pvalue, axis="columns", subset=p_value_rows_subset)
+
+    return styled_df
