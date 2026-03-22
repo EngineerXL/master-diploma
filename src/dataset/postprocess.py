@@ -68,9 +68,15 @@ class PostprocessingWrapper:
             self.bag_paths.append(result_path)
 
     def load_bag(self, ride_segment_id: int):
-        with open(self.bag_paths[ride_segment_id], "r") as f:
-            bag_data = json.load(f)
-        return bag_data
+        try:
+            with open(self.bag_paths[ride_segment_id], "r") as f:
+                bag_data = json.load(f)
+            return bag_data
+        except:
+            print(
+                f"Error opening file {ride_segment_id}: {self.bag_paths[ride_segment_id]}"
+            )
+            raise
 
     def get_velocity_data(self, ride_segment_id: int) -> Dict[str, np.ndarray]:
         """
