@@ -7,6 +7,7 @@ from src.dataset.pipeline import DATA_OUTPUT_ROOT
 
 
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
+METRICS_NAMES = ["mean", "std", "MSE", "MAE", "q95_abs"]
 
 
 class PostprocessingWrapper:
@@ -136,38 +137,42 @@ class PostprocessingWrapper:
                 outliers.append((id, path))
         return outliers
 
-    def get_velocity_metrics(self, ride_segment_id: int | None = None) -> pd.DataFrame:
-        """
-        Calculate velocity metrics (RMSE, mean, stddev, MAE) for each velocity component.
-
-        Parameters:
-        ----------
-        ride_segment_id : int or None
-            Ride segment ID to process. If None, processes all segments.
-        """
-        # Get raw errors (estimated - ground truth) - already combined by get_velocity_errors
-        errors = self.get_velocity_errors(ride_segment_id)
-
-        # Calculate metrics for each velocity component
-        metrics = {}
+    def get_ride_metrics(self, ride_segment_id: int | None = None) -> dict:
+        segments = (
+            range(len(self.bag_paths)) if ride_segment_id is None else [ride_segment_id]
+        )
+        metrics = dict()
         for field in VELOCITIES_FIELDS:
-            # Calculate metrics
-            rmse = np.sqrt(np.mean(errors[field] ** 2))
-            mean_err = np.mean(errors[field])
-            std = np.std(errors[field])
-            q95_abs = np.quantile(np.abs(errors[field]), 0.95)
-            mae = np.mean(np.abs(errors[field]))
+            metrics[field] = {key: [] for key in METRICS_NAMES}
 
-            metrics[field] = {
-                "mean": mean_err,
-                "std": std,
-                "q95_abs": q95_abs,
-                "MAE": mae,
-                "RMSE": rmse,
+        for segment in segments:
+            # Get raw errors (estimated - ground truth) - already combined by get_velocity_errors
+            errors = self.get_velocity_errors(segment)
+
+            # Calculate metrics for each velocity component
+            for field in VELOCITIES_FIELDS:
+                # Calculate metrics
+                metrics[field]["mean"].append(np.mean(errors[field]))
+                metrics[field]["std"].append(np.std(errors[field]))
+                metrics[field]["MSE"].append(np.mean(np.square(errors[field])))
+                metrics[field]["MAE"].append(np.mean(np.abs(errors[field])))
+                metrics[field]["q95_abs"].append(
+                    np.quantile(np.abs(errors[field]), 0.95)
+                )
+
+        return metrics
+
+    def get_ride_avg_metrics_df(
+        self, ride_segment_id: int | None = None
+    ) -> pd.DataFrame:
+        metrics = self.get_ride_metrics(ride_segment_id)
+        avg_metrics = {}
+        for field in VELOCITIES_FIELDS:
+            avg_metrics[field] = {
+                key: np.mean(metrics[field][key]) for key in METRICS_NAMES
             }
-
         # Create DataFrame with metric types as rows and velocity components as columns
-        df = pd.DataFrame(metrics).T
+        df = pd.DataFrame(avg_metrics).T
         return df
 
     def plot_velocities(
