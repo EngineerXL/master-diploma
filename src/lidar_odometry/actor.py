@@ -195,7 +195,9 @@ class LidarOdometryActor:
         if self.use_kalman_filter:
             self.kalman_filter.predict()
             self.kalman_filter.update(self.swap_v_and_w(velocities))
-            self.state["model_velocities"] = self.swap_v_and_w(self.kalman_filter.x)
+            self.state["model_velocities"] = self.swap_v_and_w(
+                self.kalman_filter.get_estimate()
+            )
         else:
             self.state["model_velocities"] = velocities
         self.state["output_velocities"] = self.swap_v_and_w(velocities)

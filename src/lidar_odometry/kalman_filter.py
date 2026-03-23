@@ -20,8 +20,9 @@ class ConstVelocityKalmanFilter:
         # https://visimind.com/wp-content/uploads/pdf/table_with_sensors.pdf
         # 0.03 m is divided by 0.1 sec, linear velocity accuracy is 0.3 m/s
         # covariance is 0.3^2 = 0.09
-        angular_process_noise_covariance=0.09,
-        linear_measurement_noise_covariance=0.01,
+        linear_measurement_noise_covariance=0.09,
+        # idk, just trust angular velocities
+        angular_process_noise_covariance=0.01,
         # Let's take point at 100 meter range, and accuracy 3 cm
         # Then angle is 0.03 / 100 = 3e-4 radians
         # 3e-4 is divided by 0.1 sec, angular velocity accuracy is 3e-3 m/s
@@ -38,34 +39,42 @@ class ConstVelocityKalmanFilter:
         self.dim = 6  # Number of state variables (vx, vy, vz, wx, wy, wz)
 
         # Process noise covariance matrix Q
-        self.Q = np.eye(self.dim)
-        self.Q[0:3, 0:3] *= linear_process_noise_covariance
-        self.Q[3:6, 3:6] *= angular_process_noise_covariance
+        self.process_cov_Q = np.eye(self.dim)
+        self.process_cov_Q[0:3, 0:3] *= linear_process_noise_covariance
+        self.process_cov_Q[3:6, 3:6] *= angular_process_noise_covariance
 
         # Measurement noise covariance matrix R
-        self.R = np.eye(self.dim)
-        self.R[0:3, 0:3] *= linear_measurement_noise_covariance
-        self.R[3:6, 3:6] *= angular_measurement_noise_covariance
+        self.observation_cov_R = np.eye(self.dim)
+        self.observation_cov_R[0:3, 0:3] *= linear_measurement_noise_covariance
+        self.observation_cov_R[3:6, 3:6] *= angular_measurement_noise_covariance
 
         # State transition matrix F (identity for constant velocity model)
-        self.F = np.eye(self.dim)
+        self.process_model_F = np.eye(self.dim)
 
         # Measurement matrix H (identity - we measure all states directly)
-        self.H = np.eye(self.dim)
+        self.observation_model_H = np.eye(self.dim)
 
         # Initial state estimate
-        self.x = x_init
+        self.estimate_x = x_init
 
         # Initial error covariance matrix P
         # We assume, that initial velocities are GT
-        self.P = np.zeros((self.dim, self.dim))
+        self.state_cov_P = np.zeros((self.dim, self.dim))
 
     def predict(self):
         """
         Predict step: x_pred = F * x, P_pred = F * P * F^T + Q
         """
-        self.x = self.F @ self.x
-        self.P = self.F @ self.P @ self.F.T + self.Q
+        self.estimate_x = self.process_model_F @ self.estimate_x
+        # cov(x) = P
+        # cov(F * x) = F cov(x) * F^T = F * P * F^T
+        self.state_cov_P = (
+            self.process_model_F @ self.state_cov_P @ self.process_model_F.T
+            + self.process_cov_Q
+        )
+
+    def get_estimate(self):
+        return self.estimate_x
 
     def update(self, z):
         """
@@ -77,15 +86,21 @@ class ConstVelocityKalmanFilter:
             z: Measurement vector
         """
         # Innovation (measurement residual)
-        y = z - self.H @ self.x
+        y = z - self.observation_model_H @ self.estimate_x
 
         # Kalman gain
-        S = self.H @ self.P @ self.H.T + self.R  # Innovation covariance
-        self.K = self.P @ self.H.T @ np.linalg.inv(S)
+        up = self.state_cov_P @ self.observation_model_H.T
+        down = (
+            self.observation_model_H @ self.state_cov_P @ self.observation_model_H.T
+            + self.observation_cov_R
+        )
+        # If observations are acurate (R is small), then we trust observations (K -> 1)
+        # On the other side (R is large) we trust our model prediction (K -> 0)
+        self.gain_K = up @ np.linalg.inv(down)
 
         # Update state estimate
-        self.x = self.x + self.K @ y
+        self.estimate_x = self.estimate_x + self.gain_K @ y
 
         # Update error covariance
-        I_KH = np.eye(self.dim) - self.K @ self.H
-        self.P = I_KH @ self.P
+        I_KH = np.eye(self.dim) - self.gain_K @ self.observation_model_H
+        self.state_cov_P = I_KH @ self.state_cov_P
