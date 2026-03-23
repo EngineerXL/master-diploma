@@ -19,36 +19,36 @@
         }
     },
     "wrapper_settings": {
-        "truck_initial_x": -12.5,
+        "truck_initial_x": -5,
         "truck_overtake_vx": 1,
         "simulate_truck": true
     },
     "config_name": "small_kalman",
     "ride_segments": [
         {
-            "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 7000,
-            "ride_frame_en": 7200
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 1100,
+            "ride_frame_en": 1200
         },
         {
-            "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 7200,
-            "ride_frame_en": 7400
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1000
         },
         {
-            "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 7400,
-            "ride_frame_en": 7600
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 1000,
+            "ride_frame_en": 1100
         },
         {
-            "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 7600,
-            "ride_frame_en": 7800
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 900,
+            "ride_frame_en": 1000
         },
         {
-            "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 7800,
-            "ride_frame_en": 8000
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 400,
+            "ride_frame_en": 500
         }
     ]
 }

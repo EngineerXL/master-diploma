@@ -19,15 +19,15 @@
         }
     },
     "wrapper_settings": {
-        "truck_initial_x": -12.5,
+        "truck_initial_x": -5,
         "truck_overtake_vx": 1,
-        "simulate_truck": false
+        "simulate_truck": true
     },
     "config_name": "test",
     "ride_segments": [
         {
             "ride_id": "boreas-2021-05-06-13-19",
-            "ride_frame_st": 200,
+            "ride_frame_st": 400,
             "ride_frame_en": 500
         }
     ]
