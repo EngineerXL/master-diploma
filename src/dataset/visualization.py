@@ -54,7 +54,7 @@ def plot_lidar_clouds_interactive(
 
 def plot_lidar_clouds_animation(
     input_clouds: List[np.ndarray],
-    max_points_per_plot: int = 10000,
+    max_points_per_plot: int = None,
     title: str = "Voxelized LiDAR Point Cloud",
     gif_path: str = "voxelized_lidar_animation.gif",
     frame_duration_ms: int = 500,  # 0.5 seconds per frame
@@ -86,7 +86,9 @@ def plot_lidar_clouds_animation(
         )
         filtered_points = points[mask]
 
-        n_points_to_show = min(len(filtered_points), max_points_per_plot)
+        n_points_to_show = len(filtered_points)
+        if (max_points_per_plot is not None):
+            n_points_to_show = min(n_points_to_show, max_points_per_plot)
         points_downsampled = filtered_points[
             np.random.choice(filtered_points.shape[0], n_points_to_show, replace=False)
         ]

@@ -92,7 +92,7 @@ class LidarOdometryPipeline:
         self,
         num_frames: int = 10,  # Number of consecutive LiDAR clouds to show
         max_dist: float = 50.0,
-        voxel_size: float = 0.5,
+        voxel_size: float = 1.0,
     ) -> List:
         wrapper = self._get_wrapper()
 
