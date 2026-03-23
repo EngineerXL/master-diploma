@@ -12,6 +12,8 @@ from tqdm import tqdm
 
 from src.dataset.utils import LidarOdometryWrapper
 from src.lidar_odometry.actor import LidarOdometryActor
+from src.lidar_odometry.cloud_processing import remove_distant_points
+from src.lidar_odometry.voxelize import voxelize
 
 DATA_OUTPUT_ROOT = "/data/boreas/output"
 
@@ -62,10 +64,10 @@ class LidarOdometryPipeline:
         self.wrapper_settings = config["wrapper_settings"]
         self.config_name = config["config_name"]
 
-        ride_frame_st = self.ride_info["ride_frame_st"]
-        ride_frame_en = self.ride_info["ride_frame_en"]
+        self.ride_frame_st = self.ride_info["ride_frame_st"]
+        self.ride_frame_en = self.ride_info["ride_frame_en"]
         suffix = self.config_name
-        self.pipeline_name = f"{ride_frame_st}-{ride_frame_en}-{suffix}"
+        self.pipeline_name = f"{self.ride_frame_st}-{self.ride_frame_en}-{suffix}"
 
     def _get_wrapper(self) -> LidarOdometryWrapper:
         wrapper = LidarOdometryWrapper(
@@ -86,14 +88,32 @@ class LidarOdometryPipeline:
             "wz": velocities[5].astype(float),
         }
 
+    def visualize(
+        self,
+        num_frames: int = 10,  # Number of consecutive LiDAR clouds to show
+        max_dist: float = 50.0,
+        voxel_size: float = 0.5,
+    ) -> List:
+        wrapper = self._get_wrapper()
+
+        wrapper.set_first_frame(self.ride_frame_st)
+        step = (self.ride_frame_en - self.ride_frame_st) // num_frames
+
+        result = []
+        for i in range(self.ride_frame_st, self.ride_frame_en, step):
+            # Get rotated LiDAR point cloud from the wrapper
+            timestamp, points, gt_velocities = wrapper.get_frame(i)
+
+            points_filtered = remove_distant_points(points, max_dist)
+            points_voxelized = voxelize(points_filtered, voxel_size)
+            result.append(points_voxelized)
+        return result
+
     def process_ride(self) -> List[Dict]:
         wrapper = self._get_wrapper()
 
-        ride_frame_st = self.ride_info["ride_frame_st"]
-        ride_frame_en = self.ride_info["ride_frame_en"]
-
-        wrapper.set_first_frame(ride_frame_st)
-        _, _, first_frame_velocities = wrapper.get_frame(ride_frame_st)
+        wrapper.set_first_frame(self.ride_frame_st)
+        _, _, first_frame_velocities = wrapper.get_frame(self.ride_frame_st)
 
         # Initialize the LidarOdometryActor with actor settings
         self.actor = LidarOdometryActor(
@@ -105,7 +125,7 @@ class LidarOdometryPipeline:
 
         # Process each frame in the ride range
         for i in tqdm(
-            range(ride_frame_st, ride_frame_en),
+            range(self.ride_frame_st, self.ride_frame_en),
             desc=f"Running \"{self.ride_info['ride_id']}/{self.pipeline_name}\" pipeline...",
         ):
             # Get rotated LiDAR point cloud from the wrapper
