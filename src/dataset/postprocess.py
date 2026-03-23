@@ -8,7 +8,7 @@ from scipy.stats import ttest_rel
 
 
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
-METRICS_NAMES = ["mean", "std", "MSE", "MAE", "q95_abs"]
+METRICS_NAMES = ["mean", "std", "MSE", "MAE", "q95_abs", "RMSE"]
 
 
 class PostprocessingWrapper:
@@ -160,6 +160,7 @@ class PostprocessingWrapper:
                 metrics[field]["q95_abs"].append(
                     np.quantile(np.abs(errors[field]), 0.95)
                 )
+                metrics[field]["RMSE"].append(np.sqrt(np.mean(np.square(errors[field]))))
 
         result = dict()
         for field in VELOCITIES_FIELDS:
