@@ -5,6 +5,15 @@ from scipy.spatial.transform import Rotation, RigidTransform
 
 
 def geman_mcclure_weights(distances_e: np.ndarray, sigma: float) -> np.ndarray:
+    """Compute Geman-McClure robust weights for outlier rejection.
+
+    Args:
+        distances_e: Euclidean distances between corresponding points.
+        sigma: Scale parameter controlling weight decay with distance.
+
+    Returns:
+        Array of weights where larger distances receive smaller weights.
+    """
     # ro(e) = (0.5 * e^2) / (sigma / 3 + e ^ 2)
     distances_e_2 = np.square(distances_e)
     return 0.5 / (sigma / 3 + distances_e_2)
@@ -13,6 +22,16 @@ def geman_mcclure_weights(distances_e: np.ndarray, sigma: float) -> np.ndarray:
 def rigid_kabsch(
     source: np.ndarray, target: np.ndarray, weights: np.ndarray
 ) -> RigidTransform:
+    """Compute optimal rigid transform using Kabsch algorithm with weighted points.
+
+    Args:
+        source: Source point cloud coordinates (N, 3).
+        target: Target point cloud coordinates (M, 3).
+        weights: Weights for each correspondence.
+
+    Returns:
+        RigidTransform containing the optimal rotation and translation.
+    """
     # Compute centroids
     source_centroid = source.mean(axis=0)
     target_centroid = target.mean(axis=0)
@@ -34,6 +53,17 @@ def build_correspondances(
     target_tree: cKDTree,
     max_correspondence_distance_tau_t: float,
 ):
+    """Find corresponding points in the target point cloud.
+
+    Args:
+        source: Source point cloud coordinates (N, 3).
+        target: Target point cloud coordinates (M, 3).
+        target_tree: Pre-built KD-tree for the target point cloud.
+        max_correspondence_distance_tau_t: Maximum allowed distance for valid correspondences.
+
+    Returns:
+        Tuple of (source_corr, target_corr, distances) for valid correspondences.
+    """
     # Find corresponding points in target
     distances, indices = target_tree.query(source, k=1)
 
@@ -56,6 +86,23 @@ def align_point_clouds_icp(
     max_iterations: int = 50,
     tolerance_gamma: float = 1e-4,
 ):
+    """Iteratively align source point cloud to target using ICP.
+
+    Args:
+        source: Source point cloud coordinates (N, 3).
+        target: Target point cloud coordinates (M, 3).
+        displacement_deviation_sigma_t: Sigma parameter for Geman-McClure weights.
+        max_correspondence_distance_tau_t: Maximum correspondence distance threshold.
+        init_transform: Initial rigid transform (rotation + translation).
+        max_iterations: Maximum number of ICP iterations.
+        tolerance_gamma: Convergence tolerance for rotation/translation change.
+
+    Returns:
+        Tuple of (final_transform, info_dict) where info_dict contains:
+            - iterations: Number of iterations performed.
+            - converged: Whether convergence was achieved.
+            - tau_t: The max_correspondence_distance_tau_t used.
+    """
     # Ensure inputs are float64 for numerical stability
     source = source.astype(np.float64)
     target = target.astype(np.float64)
@@ -96,5 +143,14 @@ def align_point_clouds_icp(
 
 
 def icp_convergence_criterion_met(delta_transform: RigidTransform, tolerance_gamma):
+    """Check if ICP has converged based on transform change.
+
+    Args:
+        delta_transform: The computed transform for the current iteration.
+        tolerance_gamma: Threshold for considering convergence.
+
+    Returns:
+        True if the norm of the exponential coordinates is below tolerance.
+    """
     velocities = delta_transform.as_exp_coords()
     return np.linalg.norm(velocities) < tolerance_gamma

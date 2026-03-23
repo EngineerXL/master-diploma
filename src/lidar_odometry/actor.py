@@ -147,6 +147,7 @@ class LidarOdometryActor:
         return t_relative.as_exp_coords() / dt
 
     def get_initial_guess(self, dt: float):
+        """Creates initial guess from velocities"""
         return RigidTransform.from_exp_coords(self.state["model_velocities"] * dt)
 
     def update_initial_guess(self, transform: RigidTransform):
@@ -159,6 +160,7 @@ class LidarOdometryActor:
             return self.prev_points
 
     def update_local_map(self, points: np.ndarray, pose: RigidTransform):
+        """Adds/removes points from local map"""
         if self.use_local_map:
             self.local_map.add_points(pose.apply(points))
             self.local_map.remove_distant_voxels(pose)
