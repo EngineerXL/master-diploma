@@ -5,6 +5,9 @@
     "build": {
         "dockerfile": "../../report/report.dockerfile"
     },
+    "runArgs": [
+        "--net=host"
+    ],
     "customizations": {
         // Configure properties specific to VS Code.
         "vscode": {
