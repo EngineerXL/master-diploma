@@ -32,7 +32,7 @@
 % \includepdf[pages=-]{extra/task} % Задание
 \setcounter{page}{2} % Устанавливает счётчик страниц
 
-% \include{contents/abstract} % Реферат
+\include{contents/abstract} % Реферат
 
 \tableofcontents % Содержание 
 \termsanddefenitions % Термины и определения
@@ -40,11 +40,24 @@
 
 \include{contents/0-introduction} % Введение
 
-% \include{contents/chapter-1} % Глава 1
-% \include{contents/chapter-2} % Глава 2
-% \include{contents/chapter-3} % Глава 3
+\section{Обзор подходов к лидарной одометрии в условиях перекрытия поля зрения}
+\include{contents/1-1-overview-lidar-odometry}
+\include{contents/1-2-icp}
+\include{contents/1-3-dynamic-occlusions}
 
-% \include{contents/conclusion} % Заключение
+\section{Разработка алгоритм лидарной одометрии}
+\include{contents/2-1-boreas-rt}
+\include{contents/2-2-preprocessing}
+\include{contents/2-3-icp-weighting}
+\include{contents/2-4-motion-model-kalman}
+\include{contents/2-5-pipeline-metrics}
+
+\section{Экспериментальное исследование}
+\include{contents/3-1-experimental-setup}
+\include{contents/3-2-results}
+\include{contents/3-3-analysis}
+
+\include{contents/conclusion} % Заключение
 
 \printbibliography % Список литературы
 
