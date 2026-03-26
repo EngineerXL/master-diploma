@@ -3,7 +3,7 @@
 {
     "name": "Lidar Odometry Research",
     "build": {
-        "dockerfile": "../development.dockerfile"
+        "dockerfile": "../../development.dockerfile"
     },
     "runArgs": [
         "--net=host"
