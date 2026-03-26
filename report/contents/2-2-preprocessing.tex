@@ -34,9 +34,7 @@
 Параметры модели препятствия и базовое смещение грузовика относительно лидара задаются в модуле добавления препятствия, как показано на рисунке~\ref{lst:preprocessing-truck-params}. Здесь боковое положение выбирается так, чтобы грузовик находился на соседней полосе, а вертикальное смещение учитывало разницу между высотой центра кузова и высотой установки лидара. Это удобно представить в поперечном сечении сцены, где видно взаимное расположение лидара и кузова грузовика, как на рисунке~\ref{img:truck-car-lidar}.
 
 \begin{figure}[h]
-  % todo image
-  \fontsize{12pt}{14pt}\selectfont
-  \lstinputlisting[firstline=4,lastline=17,language=Python]{../src/geometry/add_obstacle.py}
+  \includegraphics[width=1.0\textwidth]{../pictures/truck-car-lidar.eps}
   \caption{Поперечное сечение сцены с лидаром Boreas-RT и грузовиком на соседней полосе}
   \label{img:truck-car-lidar}
 \end{figure}
