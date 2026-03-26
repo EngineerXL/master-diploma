@@ -93,14 +93,16 @@ class LidarOdometryPipeline:
         num_frames: int = 10,  # Number of consecutive LiDAR clouds to show
         max_dist: float = 50.0,
         voxel_size: float = 1.0,
+        start_frame_offset: int = 0,
     ) -> List:
         wrapper = self._get_wrapper()
 
         wrapper.set_first_frame(self.ride_frame_st)
-        step = (self.ride_frame_en - self.ride_frame_st) // num_frames
+        start_frame_id = self.ride_frame_st + start_frame_offset
+        step = (self.ride_frame_en - start_frame_id) // num_frames
 
         result = []
-        for i in range(self.ride_frame_st, self.ride_frame_en, step):
+        for i in range(start_frame_id, self.ride_frame_en, step):
             # Get rotated LiDAR point cloud from the wrapper
             timestamp, points, gt_velocities = wrapper.get_frame(i)
 

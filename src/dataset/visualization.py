@@ -56,7 +56,6 @@ def plot_lidar_clouds_animation(
     input_clouds: List[np.ndarray],
     max_points_per_plot: int = None,
     title: str = "Voxelized LiDAR Point Cloud",
-    gif_path: str = "voxelized_lidar_animation.gif",
     frame_duration_ms: int = 500,  # 0.5 seconds per frame
     fig_width: int = 18,
     fig_height: int = 9,
@@ -73,6 +72,8 @@ def plot_lidar_clouds_animation(
     v_high: float = 5.0,
     cmap: str = "inferno",
     alpha: float = 0.8,
+    img_path : str | None = None,
+    gif_path: str | None = None,
 ):
     frames = []
     for i, points in enumerate(input_clouds):
@@ -163,16 +164,20 @@ def plot_lidar_clouds_animation(
         # Convert the figure to a PIL Image using BytesIO
         buf = io.BytesIO()
         fig.savefig(buf, format="png", bbox_inches="tight")
+        if (img_path is not None):
+            # Save the figure as a PNG file
+            fig.savefig(img_path, format="png", bbox_inches="tight")
         plt.close()
         buf.seek(0)
         img = Image.open(buf)
         frames.append(img)
 
-    # Save as GIF with Pillow
-    frames[0].save(
-        gif_path,
-        save_all=True,
-        append_images=frames[1:],
-        duration=frame_duration_ms,
-        loop=0,  # Loop infinitely
-    )
+    if (gif_path is not None):
+        # Save as GIF with Pillow
+        frames[0].save(
+            gif_path,
+            save_all=True,
+            append_images=frames[1:],
+            duration=frame_duration_ms,
+            loop=0,  # Loop infinitely
+        )
