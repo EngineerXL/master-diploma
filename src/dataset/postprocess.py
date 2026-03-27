@@ -4,7 +4,7 @@ import json
 from typing import Dict, List, Optional
 import matplotlib.pyplot as plt
 from src.dataset.pipeline import DATA_OUTPUT_ROOT
-from scipy.stats import ttest_rel
+from scipy.stats import ttest_rel, normaltest
 
 
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
@@ -116,7 +116,9 @@ class PostprocessingWrapper:
         return data_np
 
     def get_velocity_errors(
-        self, ride_segment_id: int | None = None
+        self,
+        ride_segment_id: int | None = None,
+        outliers_threshold: int | None = None,
     ) -> Dict[str, np.ndarray]:
         segments = range(len(self)) if ride_segment_id is None else [ride_segment_id]
         errors = {field: np.array([]) for field in VELOCITIES_FIELDS}
@@ -125,6 +127,11 @@ class PostprocessingWrapper:
             for field in VELOCITIES_FIELDS:
                 err_part = data[f"{field}_est"] - data[f"{field}_gt"]
                 errors[field] = np.concatenate([errors[field], err_part])
+        if outliers_threshold is not None:
+            return {
+                field: self.remove_outliers_zscore(errors[field], outliers_threshold)
+                for field in VELOCITIES_FIELDS
+            }
         return errors
 
     def find_velocity_outlier_ride(self, field: str, threshold: float) -> list:
@@ -160,7 +167,9 @@ class PostprocessingWrapper:
                 metrics[field]["q95_abs"].append(
                     np.quantile(np.abs(errors[field]), 0.95)
                 )
-                metrics[field]["RMSE"].append(np.sqrt(np.mean(np.square(errors[field]))))
+                metrics[field]["RMSE"].append(
+                    np.sqrt(np.mean(np.square(errors[field])))
+                )
 
         result = dict()
         for field in VELOCITIES_FIELDS:
@@ -191,12 +200,16 @@ class PostprocessingWrapper:
         height: int = 3,
         width: int = 2,
         save_path: Optional[str] = None,
+        compare_against=None,
     ):
         data_to_plot = self.get_velocity_data(ride_segment_id)
         if frame_st is None:
             frame_st = 0
         if frame_en is None:
             frame_en = len(data_to_plot["timestamp"])
+
+        if compare_against is not None:
+            data_to_compare = compare_against.get_velocity_data(ride_segment_id)
 
         # Create 3x2 figure layout for estimated vs ground truth velocities
         fig, axes = plt.subplots(height, width, figsize=figsize)
@@ -224,6 +237,14 @@ class PostprocessingWrapper:
                 linewidth=1.5,
                 label="Estimated",
             )
+            if compare_against is not None:
+                ax.plot(
+                    t,
+                    data_to_compare[f"{vel_field}_est"][frame_st:frame_en],
+                    "g-",
+                    linewidth=1.5,
+                    label="Estimate B",
+                )
             plot_name = (
                 "Linear Velocity " if col == 0 else "Angular Velocity "
             ) + vel_field[-1]
@@ -242,6 +263,18 @@ class PostprocessingWrapper:
 
         return fig
 
+    def remove_outliers_zscore(self, data: np.ndarray, threshold=3):
+        # Calculate the mean and standard deviation
+        mean = np.mean(data)
+        std = np.std(data)
+
+        # Calculate Z-scores for each data point
+        z_scores = np.abs((data - mean) / std)
+
+        # Filter out data points where the absolute Z-score is greater than the threshold
+        cleaned_data = data[z_scores <= threshold]
+        return cleaned_data
+
     def plot_velocity_errors(
         self,
         ride_segment_id: int | None = None,
@@ -250,6 +283,8 @@ class PostprocessingWrapper:
         height: int = 3,
         width: int = 2,
         save_path: Optional[str] = None,
+        outliers_threshold: int | None = None,
+        with_normal_distribution: bool = False,
     ):
         """
         Plot error histograms for every velocity component.
@@ -270,7 +305,7 @@ class PostprocessingWrapper:
         matplotlib.figure.Figure
             The created figure object.
         """
-        errors = self.get_velocity_errors(ride_segment_id)
+        errors = self.get_velocity_errors(ride_segment_id, outliers_threshold)
 
         # Create figure with 2 columns (linear and angular velocities) and 3 rows
         fig, axes = plt.subplots(height, width, figsize=figsize)
@@ -288,7 +323,25 @@ class PostprocessingWrapper:
                 color="steelblue",
                 edgecolor="black",
                 linewidth=0.5,
+                density=True,
             )
+
+            if with_normal_distribution:
+                # Calculate mean and std for normal distribution curve
+                mean = np.mean(errors[field])
+                std = np.std(errors[field])
+
+                # Create x values spanning the histogram range
+                x_min, x_max = ax.get_xlim()
+                x = np.linspace(x_min, x_max, 100)
+
+                # Calculate y values using normal distribution formula
+                y = (1 / (std * np.sqrt(2 * np.pi))) * np.exp(
+                    -0.5 * ((x - mean) ** 2) / (std**2)
+                )
+
+                # Plot the normal distribution curve as red line
+                ax.plot(x, y, "r-", linewidth=2, label="Normal Distribution")
 
             # Add vertical line at zero error
             ax.axvline(
