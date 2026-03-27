@@ -1,0 +1,77 @@
+{
+    "actor_settings": {
+        "voxel_size": 0.5,
+        "points_max_distance_r_max": 50,
+        "min_deviation_distance_delta_min": 0.1,
+        "icp_max_iterations": 200,
+        "tolerance_gamma": 1e-4,
+        "initial_max_correspondance_distance_tau_0": 1,
+        "factor_voxel_size_map_merge": 0.5,
+        "factor_voxel_size_registration": 1.5,
+        "max_points_per_voxel_N_max": 20,
+        "use_local_map": false,
+        "kalman_filter_settings": {
+            "use": true,
+            "linear_process_noise_covariance": 0.01,
+            "linear_measurement_noise_covariance": 0.09,
+            "angular_process_noise_covariance": 0.01,
+            "angular_measurement_noise_covariance": 9e-06
+        }
+    },
+    "wrapper_settings": {
+        "simulate_truck": false
+    },
+    "config_name": "rt_benchmark_10_full_rides_kalman",
+    "ride_segments": [
+        {
+            "ride_id": "boreas-2024-12-04-12-34",
+            "ride_frame_st": 0,
+            "ride_frame_en": 5562
+        },
+        {
+            "ride_id": "boreas-2024-12-04-15-19",
+            "ride_frame_st": 0,
+            "ride_frame_en": 2180
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-44",
+            "ride_frame_st": 0,
+            "ride_frame_en": 8977
+        },
+        {
+            "ride_id": "boreas-2025-02-15-17-19",
+            "ride_frame_st": 0,
+            "ride_frame_en": 11092
+        },
+        {
+            "ride_id": "boreas-2024-12-04-12-08",
+            "ride_frame_st": 0,
+            "ride_frame_en": 5699
+        },
+        {
+            "ride_id": "boreas-2024-12-04-14-50",
+            "ride_frame_st": 0,
+            "ride_frame_en": 1740
+        },
+        {
+            "ride_id": "boreas-2024-12-23-16-27",
+            "ride_frame_st": 0,
+            "ride_frame_en": 9167
+        },
+        {
+            "ride_id": "boreas-2025-01-08-11-22",
+            "ride_frame_st": 0,
+            "ride_frame_en": 9516
+        },
+        {
+            "ride_id": "boreas-2025-07-18-15-30",
+            "ride_frame_st": 0,
+            "ride_frame_en": 8479
+        },
+        {
+            "ride_id": "boreas-2025-08-13-09-01",
+            "ride_frame_st": 0,
+            "ride_frame_en": 10771
+        }
+    ]
+}
