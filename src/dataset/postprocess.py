@@ -4,7 +4,7 @@ import json
 from typing import Dict, List, Optional
 import matplotlib.pyplot as plt
 from src.dataset.pipeline import DATA_OUTPUT_ROOT
-from scipy.stats import ttest_rel, normaltest
+from scipy.stats import ttest_rel, zscore
 
 
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
@@ -264,15 +264,11 @@ class PostprocessingWrapper:
         return fig
 
     def remove_outliers_zscore(self, data: np.ndarray, threshold=3):
-        # Calculate the mean and standard deviation
-        mean = np.mean(data)
-        std = np.std(data)
-
         # Calculate Z-scores for each data point
-        z_scores = np.abs((data - mean) / std)
+        z_scores = zscore(data)
 
         # Filter out data points where the absolute Z-score is greater than the threshold
-        cleaned_data = data[z_scores <= threshold]
+        cleaned_data = data[np.abs(z_scores) <= threshold]
         return cleaned_data
 
     def plot_velocity_errors(
