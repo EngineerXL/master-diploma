@@ -1,6 +1,8 @@
 \documentclass[pdf, hyperref={unicode}, aspectratio=169]{beamer}
 
 \usepackage{./diploma-slides-latex-template/styles}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
 
 % Включаю кнопочки
 \setbeamertemplate{navigation symbols}[default]
@@ -25,46 +27,51 @@
 }
 
 
-\section{Актуальность темы}
+\section{Актуальность}
 \begin{frame}
-	\frametitle{Актуальность темы}
-	\begin{itemize}
-		\item Беспилотный транспорт активно развивается: Waymo, <<Автономный транспорт Яндекса>> (роботакси, грузовики, роботы-доставщики).
-		\item Лидар обеспечивает геометрию сцены при слабой текстуре и нестабильном GNSS, поэтому лидарная одометрия --- важный компонент локализации.
-		\item Крупные динамические объекты (грузовики) перекрывают существенную часть поля зрения лидара, что приводит к деградации оценки собственного движения.
-		\item Необходимо сохранять достаточную точность одометрии на коротком участке пути до восстановления наблюдаемости сцены.
-	\end{itemize}
-	\begin{center}
-		\includegraphics[height=3cm]{ya/truck-forest.png}
-	\end{center}
+	\frametitle{Актуальность}
+	\begin{columns}
+		\column{0.35\textwidth}
+		\begin{itemize}
+			\fontsize{10pt}{12pt}\selectfont
+			\item Беспилотный транспорт: Waymo, Яндекс.
+			\item GNSS работает нестабильно.
+			\item Лидар --- основной источник геометрии.
+			\item Грузовик в соседней полосе перекрывает поле зрения и разрушает оценку движения.
+		\end{itemize}
+		\column{0.55\textwidth}
+		\includegraphics[width=\textwidth]{ya/truck-forest.png}\\[0.2em]
+		\begin{minipage}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{ya/car-field.png}
+		\end{minipage}
+		\begin{minipage}{0.49\textwidth}
+			\includegraphics[width=\textwidth]{ya/car-highway.png}
+		\end{minipage}
+	\end{columns}
 \end{frame}
 
 
-\section{Цель и задачи работы}
+\section{Цели и задачи}
 \begin{frame}
-	\frametitle{Цель и задачи работы}
+	\frametitle{Объект, предмет, цель}
 
-	\textbf{Объект:} методы локализации и оценки движения беспилотного автомобиля на основе лидарных данных.
+	\textbf{Объект:} локализация беспилотного автомобиля по лидарным данным.
 
-	\textbf{Предмет:} алгоритмы лидарной одометрии, учитывающие перекрытие поля зрения при регистрации облаков точек и фильтрации оценок движения.
+	\textbf{Предмет:} алгоритмы лидарной одометрии при перекрытии поля зрения.
 
-	\vspace{0.3em}
-	\textbf{Цель} --- разработать устойчивый алгоритм лидарной одометрии беспилотного автомобиля, учитывающий перекрытие поля зрения и позволяющий оценивать движение на коротком участке пути.
+	\vspace{0.5em}
+	\textbf{Цель:} разработать устойчивый алгоритм лидарной одометрии, сохраняющий оценку движения на коротком участке пути.
 \end{frame}
 
 
 \begin{frame}
-	\frametitle{Цель и задачи работы}
-
-	\textbf{Задачи:}
+	\frametitle{Задачи}
 	\begin{enumerate}
-		\fontsize{10pt}{12pt}\selectfont
-		\item Проанализировать существующие подходы к лидарной одометрии и выявить ограничения классических методов регистрации облаков точек.
-		\item Описать используемый набор данных Boreas-RT и применяемое подмножество проездов.
-		\item Формализовать сценарий перекрытия поля зрения лидара и требования к устойчивости алгоритма на коротком участке пути.
-		\item Разработать алгоритм обработки последовательности лидарных кадров: вокселизация, регистрация соседних облаков, оценка преобразования между парами точек с учётом весов, модель движения.
-		\item Определить метрики качества и реализовать программный конвейер с возможностью моделирования перекрытия поля зрения.
-		\item Провести экспериментальное исследование точности по компонентам линейной и угловой скорости.
+		\item Анализ классических методов регистрации облаков точек;
+		\item Формализация сценария перекрытия поля зрения;
+		\item Разработка алгоритма: вокселизация, взвешенный ICP, модель движения, фильтр Калмана;
+		\item Реализация конвейера и метрик качества;
+		\item Экспериментальное исследование на Boreas-RT.
 	\end{enumerate}
 \end{frame}
 
@@ -72,287 +79,252 @@
 \section{Постановка задачи}
 \begin{frame}
 	\frametitle{Постановка задачи}
-
-	Дана последовательность лидарных кадров $\{P_t\}$ и эталонные значения линейных $v_x, v_y, v_z$ и угловых $\omega_x, \omega_y, \omega_z$ скоростей.
-
-	\textbf{Требуется:} построить алгоритм, который по парам соседних облаков $(P_{t-1}, P_t)$ оценивает относительное евклидово преобразование $T_t$ и компоненты скоростей $\hat{\xi}_t$ так, чтобы:
-
-	\begin{itemize}
-		\item оценки оставались устойчивыми при частичном перекрытии поля зрения крупным динамическим объектом (грузовиком в соседней полосе);
-		\item ошибка оценки не накапливалась катастрофически на коротком интервале (10 секунд $\approx$ 100 кадров);
-		\item подавлялось влияние выбросов в соответствиях между точками;
-		\item использовалась априорная кинематическая информация о движении автомобиля.
-	\end{itemize}
-\end{frame}
-
-
-\section{Сценарий перекрытия поля зрения}
-\begin{frame}
-	\frametitle{Сценарий перекрытия поля зрения}
-
 	\begin{columns}
 		\column{0.55\textwidth}
-		Крупный динамический объект (грузовик в соседней полосе) нарушает предпосылки классического ICP:
+		По паре соседних облаков $(P_{t-1}, P_t)$ оценить относительное преобразование $T_t$ и скорости $(v_x,v_y,v_z,\omega_x,\omega_y,\omega_z)$.
+
+		\textbf{Образ результата:}
 		\begin{itemize}
 			\fontsize{10pt}{12pt}\selectfont
-			\item часть статической сцены перестаёт наблюдаться;
-			\item уменьшается перекрытие соседних облаков;
-			\item появляются точки самого динамического объекта;
-			\item оставшаяся часть сцены становится менее информативной.
+			\item Устойчивость к перекрытию поля зрения.
+			\item Корректная оценка на 10 секундах ($\sim$ 100 кадров).
+			\item Подавление выбросов и учёт кинематики.
 		\end{itemize}
-		Это приводит не только к выбросам, но и к \textbf{дефициту информативных наблюдений}.
 
 		\column{0.45\textwidth}
-		\begin{center}
-			\includegraphics[width=\textwidth]{truck-car-lidar.eps}
-		\end{center}
+		\includegraphics[width=\textwidth]{truck-car-lidar.eps}
 	\end{columns}
 \end{frame}
 
 
 \section{Архитектура решения}
 \begin{frame}
-	\frametitle{Архитектура решения: конвейер обработки кадра}
+	\frametitle{Архитектура решения}
 
-	Покадровая обработка последовательности лидарных кадров:
+	\begin{center}
+		\begin{tikzpicture}[
+			node distance=0.35cm,
+			block/.style={rectangle, draw, rounded corners, align=center,
+				minimum height=0.9cm, minimum width=2.6cm, fill=blue!10, font=\small},
+			arr/.style={-latex, thick}
+		]
+			\node[block] (pre) {Предобработка\\облака точек};
+			\node[block, right=of pre] (vox) {Двойная\\вокселизация};
+			\node[block, right=of vox] (init) {Начальное\\приближение};
+			\node[block, right=of init] (icp) {Взвешенный\\ICP};
+			\node[block, right=of icp] (kal) {Фильтр\\Калмана};
 
-	\begin{enumerate}
-		\fontsize{11pt}{13pt}\selectfont
-		\item \textbf{Предобработка:} удаление точек дальше $r_{\max}$, моделирование грузовика, обгоняющего с относительной скоростью 1~м/с;
-		\item \textbf{Двойная вокселизация:} $P_{\mathrm{merge}} = \mathcal{V}_{\alpha v}(P)$, $\hat{P} = \mathcal{V}_{\beta v}(P_{\mathrm{merge}})$;
-		\item \textbf{Начальное приближение} по предыдущей оценке движения: $T_{\mathrm{pred}} = \exp(\xi_{t-1}\Delta t)$;
-		\item \textbf{Адаптивный порог соответствий} $\tau_t = 3\sigma_t$ по правилу трёх сигм;
-		\item \textbf{Взвешенный ICP} с функцией Гемана---Макклюра и алгоритмом Кабша;
-		\item \textbf{Фильтр Калмана} с моделью постоянной скорости --- стабилизация начального приближения для следующего шага ICP.
-	\end{enumerate}
+			\draw[arr] (pre) -- (vox);
+			\draw[arr] (vox) -- (init);
+			\draw[arr] (init) -- (icp);
+			\draw[arr] (icp) -- (kal);
+			\draw[arr] (kal.south) ..controls +(0,-0.8) and +(0,-0.8).. node[below, font=\footnotesize]{прогноз $\xi_{t-1}$} (init.south);
+		\end{tikzpicture}
+	\end{center}
+
+	Регистрация --- между двумя соседними облаками.\\Фильтр Калмана стабилизирует начальное приближение ICP.
 \end{frame}
 
 
-\section{Взвешенный ICP}
+\section{Стек технологий}
 \begin{frame}
-	\frametitle{Взвешенный ICP: функция Гемана---Макклюра}
+	\frametitle{Стек технологий}
+	\begin{itemize}
+		\item \textbf{Python} --- основной язык реализации.
+		\item \textbf{NumPy} --- собственная вокселизация облаков точек.
+		\item \textbf{SciPy} --- \texttt{cKDTree}, \texttt{Rotation}, \texttt{RigidTransform}, \texttt{ttest\_rel}, \texttt{zscore}.
+		\item \textbf{pyboreas} --- работа с набором данных Boreas-RT.
+		\item \textbf{Matplotlib, Plotly, Jupyter} --- анализ и визуализация.
+		\item \textbf{Docker} --- воспроизводимая среда.
+	\end{itemize}
+\end{frame}
 
-	На каждой итерации решается задача
+
+\section{Алгоритмы}
+\begin{frame}
+	\frametitle{Взвешенный ICP с функцией Гемана---Макклюра}
+
+	Минимизация на каждой итерации:
 	\begin{equation*}
-		\Delta T = \arg\min_T \sum_{(s,q)\in C(\tau_t)} \rho\bigl(\|Ts - q\|_2\bigr),
+		\Delta T = \arg\min_T \sum_{(s,q)} \rho(\|Ts - q\|_2),
 		\qquad
 		\rho(e) = \frac{e^2/2}{\sigma_t/3 + e^2}.
 	\end{equation*}
 
-	В реализации используются веса:
+	Веса, дающие устойчивость к выбросам:
 	\begin{equation*}
 		w(e) = \frac{0.5}{\sigma_t/3 + e^2}.
 	\end{equation*}
 
-	\begin{itemize}
-		\fontsize{10pt}{12pt}\selectfont
-		\item Чем больше расстояние между парой точек --- тем меньше её вклад в оценку преобразования.
-		\item Применяются веса, дающие устойчивость к выбросам --- обеспечивается \textbf{снижение влияния выбросов}.
-		\item Преобразование вычисляется взвешенным алгоритмом Кабша (\texttt{Rotation.align\_vectors} из SciPy).
-		\item Архитектура опирается на KISS-ICP, но регистрация выполняется не frame-to-map, а напрямую между двумя соседними облаками.
-	\end{itemize}
+	Решение --- взвешенным алгоритмом Кабша.
 \end{frame}
 
 
-\section{Модель движения и фильтр Калмана}
 \begin{frame}
 	\frametitle{Модель движения и фильтр Калмана}
 
-	\textbf{Модель постоянной скорости.} Между соседними кадрами движение меняется плавно, поэтому начальное приближение для ICP формируется по предыдущей оценке скоростей.
+	\textbf{Постоянная скорость:} прогноз $T_{\mathrm{pred}} = \exp(\xi_{t-1}\Delta t)$.
 
-	\textbf{Фильтр Калмана} применяется к шести компонентам скорости $(v_x, v_y, v_z, \omega_x, \omega_y, \omega_z)$ независимо. Параметры выбраны из инженерных соображений:
+	\textbf{Фильтр Калмана} по каждой из 6 компонент скорости независимо:
+	\begin{center}
+		\fontsize{11pt}{13pt}\selectfont
+		$Q_v = 0.01$, $R_v = 0.09$, $Q_\omega = 0.01$, $R_\omega = 9\cdot10^{-6}$.
+	\end{center}
+
+	Главная роль: стабилизация начального приближения ICP на следующем кадре.
+\end{frame}
+
+
+\section{Данные}
+\begin{frame}
+	\frametitle{Данные: Boreas-RT}
 	\begin{itemize}
-		\fontsize{10pt}{12pt}\selectfont
-		\item ковариация процесса по линейной скорости: $Q_v = 0.01$ ($\sim$ $1~\text{м/с}^2 \cdot 0.1~\text{с}$);
-		\item ковариация измерения по линейной скорости: $R_v = 0.09$ (точность лидара $\sim$ 3 см на интервале 0.1 с);
-		\item ковариация процесса по угловой скорости: $Q_\omega = 0.01$;
-		\item ковариация измерения по угловой скорости: $R_\omega = 9\cdot 10^{-6}$.
+		\item 10 проездов, 725 десятисекундных сцен; типы: Suburbs, Tunnel, Skyway, Industrial, Farm.
+		\item Моделируемый обгон грузовика: смещение $-5$~м, относительная скорость 1~м/с.
 	\end{itemize}
-
-	\textbf{Ключевая идея:} фильтр используется прежде всего для стабилизации начального приближения ICP на следующем шаге, а не как постобработка выходов.
-\end{frame}
-
-
-\section{Экспериментальный конвейер}
-\begin{frame}
-	\frametitle{Экспериментальный конвейер}
-
-	\textbf{Набор данных:} Boreas-RT --- 10 тестовых проездов (Suburbs, Tunnel East, Skyway, Industrial, Farm и др.).
-
-	\textbf{Две серии экспериментов:}
-	\begin{itemize}
-		\fontsize{10pt}{12pt}\selectfont
-		\item \textbf{Основная серия}: 725 десятисекундных сцен (по 100 кадров) с моделируемым обгоном грузовиком. Цель --- проверить устойчивость алгоритма к перекрытию поля зрения.
-		\item \textbf{Контрольная серия}: полные проезды без искусственного перекрытия. Цель --- убедиться, что фильтр Калмана не подавляет естественную динамику автомобиля.
-	\end{itemize}
-
-	\textbf{Метрики качества по 6 компонентам скорости:} среднее смещение, стандартное отклонение, MSE, MAE, RMSE, 95\%-квантиль абсолютной ошибки.
-
-	\textbf{Статистическое сравнение конфигураций:} парный T-критерий Стьюдента ($\alpha = 0.05$).
-\end{frame}
-
-
-\section{Результаты: полные проезды}
-\begin{frame}
-	\frametitle{Результаты: распределение ошибок на полных проездах}
-
-	\begin{columns}
-		\column{0.5\textwidth}
-		\begin{center}
-			\fontsize{8pt}{9pt}\selectfont
-			Без удаления выбросов
-			\includegraphics[width=\textwidth]{hists/hist_full_no_kalman.png}
-		\end{center}
-
-		\column{0.5\textwidth}
-		\begin{center}
-			\fontsize{8pt}{9pt}\selectfont
-			После правила трёх сигм
-			\includegraphics[width=\textwidth]{hists/hist_full_filtered_no_kalman.png}
-		\end{center}
-	\end{columns}
-
-	После удаления редких выбросов распределения близки к нормальным --- это даёт практическое основание использовать фильтр Калмана.
+	\begin{center}
+		\begin{minipage}{0.32\textwidth}
+			\centering\small Tunnel\\
+			\includegraphics[width=\textwidth]{rides/tunnel_truck_overtake_frame.png}
+		\end{minipage}
+		\begin{minipage}{0.32\textwidth}
+			\centering\small Skyway\\
+			\includegraphics[width=\textwidth]{rides/skyway_truck_overtake_frame.png}
+		\end{minipage}
+		\begin{minipage}{0.32\textwidth}
+			\centering\small Industrial\\
+			\includegraphics[width=\textwidth]{rides/industrial_truck_overtake_frame.png}
+		\end{minipage}
+	\end{center}
 \end{frame}
 
 
 \begin{frame}
-	\frametitle{Результаты: фильтр Калмана не подавляет динамику}
+	\frametitle{Данные: Boreas-RT (продолжение)}
+	\begin{center}
+		\begin{minipage}{0.45\textwidth}
+			\centering\small Farm\\
+			\includegraphics[width=\textwidth]{rides/farm_truck_overtake_frame.png}
+		\end{minipage}
+		\hspace{0.02\textwidth}
+		\begin{minipage}{0.45\textwidth}
+			\centering\small Suburbs\\
+			\includegraphics[width=\textwidth]{rides/suburbs_truck_overtake_frame.png}
+		\end{minipage}
+	\end{center}
+\end{frame}
 
-	30-секундный фрагмент \texttt{3\_200\_500} (Suburbs) с участками ускорения и замедления:
 
+\section{Результаты}
+\begin{frame}
+	\frametitle{Полные проезды: фильтр не подавляет динамику}
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{center}
 			\fontsize{8pt}{9pt}\selectfont Без фильтра Калмана\\
 			\includegraphics[width=\textwidth]{plots/3_200_500_no_kalman.png}
 		\end{center}
-
 		\column{0.5\textwidth}
 		\begin{center}
 			\fontsize{8pt}{9pt}\selectfont С фильтром Калмана\\
 			\includegraphics[width=\textwidth]{plots/3_200_500.png}
 		\end{center}
 	\end{columns}
-
-	Оценки совпадают: фильтр не вырождает оценку в почти постоянную величину.
+	\begin{center}\small Естественные ускорения и замедления сохраняются.\end{center}
 \end{frame}
 
 
-\section{Результаты: 10-секундные сцены}
 \begin{frame}
-	\frametitle{Сцена 341 (Tunnel East): наиболее показательный выигрыш}
-
+	\frametitle{Сцена 341 (Tunnel): устранение деградации $v_x$}
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{center}
 			\fontsize{8pt}{9pt}\selectfont Без фильтра Калмана\\
 			\includegraphics[width=\textwidth]{plots/341_no_kalman.png}
 		\end{center}
-
 		\column{0.5\textwidth}
 		\begin{center}
-			\fontsize{8pt}{9pt}\selectfont Сравнение\\
+			\fontsize{8pt}{9pt}\selectfont С фильтром Калмана\\
 			\includegraphics[width=\textwidth]{plots/341.png}
 		\end{center}
 	\end{columns}
-
-	В туннеле направление вдоль оси $x$ геометрически вырождено: без фильтра происходит практически полная деградация линейных скоростей; с фильтром корректная оценка сохраняется на всём 10-секундном интервале.
+	\begin{center}\small Корректная оценка сохраняется на всех 10 секундах.\end{center}
 \end{frame}
 
 
 \begin{frame}
-	\frametitle{Сцена 65 (Tunnel East): удержание $v_x$ от провала к нулю}
-
+	\frametitle{Сцена 65 (Tunnel): удержание $v_x$ от провала к нулю}
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{center}
 			\fontsize{8pt}{9pt}\selectfont Без фильтра Калмана\\
 			\includegraphics[width=\textwidth]{plots/65_no_kalman.png}
 		\end{center}
-
 		\column{0.5\textwidth}
 		\begin{center}
-			\fontsize{8pt}{9pt}\selectfont Сравнение\\
+			\fontsize{8pt}{9pt}\selectfont С фильтром Калмана\\
 			\includegraphics[width=\textwidth]{plots/65.png}
 		\end{center}
 	\end{columns}
-
-	Без фильтра $v_x$ деградирует почти до нуля и появляется смещение $v_z$. Фильтр Калмана удерживает корректную оценку $v_x$ около 6 секунд и устраняет смещение $v_z$.
+	\begin{center}\small Фильтр Калмана удерживает $v_x$ около 6 секунд и устраняет смещение $v_z$.\end{center}
 \end{frame}
 
 
-\section{Статистическое сравнение}
 \begin{frame}
-	\frametitle{Парный T-критерий Стьюдента: основные результаты}
-
-	Сравнение по 725 десятисекундным сценам, $\alpha = 0.05$.
-
+	\frametitle{Статистика по 725 сценам (T-критерий Стьюдента, $\alpha=0.05$)}
 	\begin{center}
-		\fontsize{10pt}{12pt}\selectfont
-		\begin{tabular}{|l|c|c|c|c|}
+		\fontsize{9pt}{11pt}\selectfont
+		\setlength{\tabcolsep}{4pt}
+		\begin{tabular}{|l|r|r|r|r|r|r|}
 			\hline
-			Компонента & Метрика & Изменение & p-value & Значимо \\
+			Метрика & mean & std & MSE & MAE & q95 & RMSE \\
 			\hline
-			$v_x$ & MSE & $-70.4\%$ & $0.040$ & \color{green!50!black}\textbf{да} \\
+			\multicolumn{7}{|l|}{\textbf{$v_x$ --- продольная линейная скорость}} \\
 			\hline
-			$v_x$ & q95 & $-11.3\%$ & $0.012$ & \color{green!50!black}\textbf{да} \\
+			A (без фильтра Калмана) & $-0.318$ & $0.299$ & $2.616$ & $0.403$ & $0.835$ & $0.483$ \\
 			\hline
-			$v_x$ & RMSE & $-15.5\%$ & $0.024$ & \color{green!50!black}\textbf{да} \\
+			B (с фильтром Калмана)  & $-0.245$ & $0.273$ & $0.775$ & $0.332$ & $0.741$ & $0.409$ \\
 			\hline
-			$v_y$ & MSE & $-9.2\%$ & $0.0016$ & \color{green!50!black}\textbf{да} \\
+			Изменение, \% & {\color{red}$+22.7$} & {\color{green!50!black}$-8.5$} & {\color{green!50!black}$-70.4$} & {\color{green!50!black}$-17.6$} & {\color{green!50!black}$-11.3$} & {\color{green!50!black}$-15.5$} \\
 			\hline
-			$v_z$, $\omega_z$ & --- & $< 1\%$ & $< 0.05$ & значимо, но мало \\
+			p-value & {\color{red}$0.97$} & {\color{green!50!black}$0.020$} & {\color{green!50!black}$0.040$} & {\color{green!50!black}$0.030$} & {\color{green!50!black}$0.012$} & {\color{green!50!black}$0.024$} \\
 			\hline
-			$\omega_y$ & --- & $\approx 0$ & --- & нет \\
+			\multicolumn{7}{|l|}{\textbf{$v_y$ --- поперечная линейная скорость}} \\
+			\hline
+			A (без фильтра Калмана) & $0.068$ & $0.158$ & $0.0490$ & $0.137$ & $0.345$ & $0.180$ \\
+			\hline
+			B (с фильтром Калмана)  & $0.069$ & $0.154$ & $0.0445$ & $0.135$ & $0.339$ & $0.176$ \\
+			\hline
+			Изменение, \% & $+1.3$ & {\color{green!50!black}$-2.1$} & {\color{green!50!black}$-9.2$} & {\color{green!50!black}$-1.4$} & {\color{green!50!black}$-1.7$} & {\color{green!50!black}$-1.9$} \\
+			\hline
+			p-value & $0.94$ & {\color{green!50!black}$<10^{-4}$} & {\color{green!50!black}$0.002$} & {\color{green!50!black}$<10^{-5}$} & {\color{green!50!black}$<10^{-5}$} & {\color{green!50!black}$<10^{-4}$} \\
 			\hline
 		\end{tabular}
 	\end{center}
-
-	\vspace{0.3em}
-	Наиболее содержательный выигрыш --- по компоненте $v_x$ (продольная скорость), наиболее чувствительной к ухудшению наблюдаемости сцены.
-\end{frame}
-
-
-\section{Программная реализация}
-\begin{frame}
-	\frametitle{Программная реализация}
-
-	\begin{itemize}
-		\item \textbf{Python} --- основной язык реализации;
-		\item \textbf{NumPy, SciPy} --- линейная алгебра, \texttt{Rotation.align\_vectors} (алгоритм Кабша), \texttt{cKDTree} для поиска ближайших соседей, статистические тесты;
-		\item \textbf{Open3D} --- работа с облаками точек, вокселизация;
-		\item \textbf{Matplotlib} --- визуализация временных рядов скоростей и гистограмм ошибок;
-		\item \textbf{Jupyter Notebook} --- интерактивный анализ результатов;
-		\item \textbf{Docker} --- воспроизводимая среда для запуска экспериментов;
-		\item Запуск экспериментов параметризован JSON-конфигурациями (по 725 сцен в основной серии).
-	\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-	\frametitle{Описание программной разработки}
-
-	QR-код со ссылкой на GitHub репозиторий с исходным кодом и текстом диссертации
-
-	\begin{center}
-		\includegraphics[height = 6cm]{qr-git.pdf}
+	\begin{center}\fontsize{9pt}{11pt}\selectfont
+		Отрицательное изменение --- уменьшение метрики. Основной выигрыш --- по $v_x$.
 	\end{center}
 \end{frame}
 
 
-\section{Оценка результата}
 \begin{frame}
-	\frametitle{Оценка результата}
+	\frametitle{Исходный код и текст диссертации}
+	\begin{center}
+		\includegraphics[height=6cm]{qr-git.pdf}
+	\end{center}
+	\begin{center}\small GitHub: исходный код, конфигурации экспериментов, текст работы.\end{center}
+\end{frame}
 
+
+\section{Эффекты и полезность}
+\begin{frame}
+	\frametitle{Эффекты и полезность}
 	\begin{itemize}
-		\fontsize{11pt}{13pt}\selectfont
-		\item Разработан устойчивый алгоритм лидарной одометрии, учитывающий перекрытие поля зрения: двойная вокселизация, взвешенный ICP с функцией Гемана---Макклюра, модель постоянной скорости и фильтр Калмана.
-		\item Реализован экспериментальный конвейер на наборе Boreas-RT: 725 десятисекундных сцен с моделируемым обгоном грузовика.
-		\item На полных проездах фильтр Калмана не подавляет естественную динамику автомобиля.
-		\item На коротких сценах с перекрытием поля зрения фильтр Калмана статистически значимо уменьшает MSE, MAE, RMSE и 95\%-квантиль ошибки по компоненте $v_x$ ($-15\dots-70\%$).
-		\item Основной эффект --- стабилизация начального приближения для следующего ICP, что снижает риск последовательной деградации регистрации.
-		\item \textbf{Ограничения:} геометрическая вырожденность некоторых сцен (туннели, трассы) сохраняется; параметры ковариаций выбраны вручную.
+		\item Устойчивый алгоритм лидарной одометрии при перекрытии поля зрения.
+		\item Снижение MSE по $v_x$ до $-70\%$ на критических сценах.
+		\item Сохранение естественной динамики на длинных маршрутах.
+		\item Воспроизводимый конвейер для сравнения конфигураций.
+		\item Применение: повышение надёжности локализации беспилотного автомобиля при обгоне грузовиком.
 	\end{itemize}
 \end{frame}
 
