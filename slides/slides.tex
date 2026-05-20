@@ -2,7 +2,7 @@
 
 \usepackage{./diploma-slides-latex-template/styles}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta, positioning}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds}
 
 % Включаю кнопочки
 \setbeamertemplate{navigation symbols}[default]
@@ -13,6 +13,8 @@
 \useoutertheme{miniframes}
 
 \graphicspath{ {../pictures/} }
+
+\newcommand{\techlib}[1]{{\scriptsize\itshape\color{black!70}#1}}
 
 \input{titlepage}
 
@@ -53,19 +55,14 @@
 
 \section{Цели и задачи}
 \begin{frame}
-	\frametitle{Объект, предмет, цель}
+	\frametitle{Объект, предмет, цель и задачи}
+	\textbf{Цель:} разработать устойчивый алгоритм лидарной одометрии, сохраняющий оценку движения на коротком участке пути.
 
+	\vspace{0.5em}
 	\textbf{Объект:} локализация беспилотного автомобиля по лидарным данным.
 
 	\textbf{Предмет:} алгоритмы лидарной одометрии при перекрытии поля зрения.
-
-	\vspace{0.5em}
-	\textbf{Цель:} разработать устойчивый алгоритм лидарной одометрии, сохраняющий оценку движения на коротком участке пути.
-\end{frame}
-
-
-\begin{frame}
-	\frametitle{Задачи}
+	
 	\begin{enumerate}
 		\item Анализ классических методов регистрации облаков точек;
 		\item Формализация сценария перекрытия поля зрения;
@@ -76,9 +73,9 @@
 \end{frame}
 
 
-\section{Постановка задачи}
+\section{Математическая постановка задачи}
 \begin{frame}
-	\frametitle{Постановка задачи}
+	\frametitle{Математическая постановка задачи}
 	\begin{columns}
 		\column{0.55\textwidth}
 		По паре соседних облаков $(P_{t-1}, P_t)$ оценить относительное преобразование $T_t$ и скорости $(v_x,v_y,v_z,\omega_x,\omega_y,\omega_z)$.
@@ -97,9 +94,9 @@
 \end{frame}
 
 
-\section{Архитектура решения}
+\section{Схема решения}
 \begin{frame}
-	\frametitle{Архитектура решения}
+	\frametitle{Схема решения}
 
 	\begin{center}
 		\begin{tikzpicture}[
@@ -122,21 +119,54 @@
 		\end{tikzpicture}
 	\end{center}
 
-	Регистрация --- между двумя соседними облаками.\\Фильтр Калмана стабилизирует начальное приближение ICP.
+	Регистрация --- между двумя соседними облаками.\\Фильтр Калмана стабилизирует начальное приближение ICP.\\[0.4em]
+	\small Алгоритм основан на статье \href{https://arxiv.org/abs/2209.15397}{KISS-ICP: In Defense of Point-to-Point ICP}.
 \end{frame}
 
 
-\section{Стек технологий}
+\section{Архитектура решения}
 \begin{frame}
-	\frametitle{Стек технологий}
-	\begin{itemize}
-		\item \textbf{Python} --- основной язык реализации.
-		\item \textbf{NumPy} --- собственная вокселизация облаков точек.
-		\item \textbf{SciPy} --- \texttt{cKDTree}, \texttt{Rotation}, \texttt{RigidTransform}, \texttt{ttest\_rel}, \texttt{zscore}.
-		\item \textbf{pyboreas} --- работа с набором данных Boreas-RT.
-		\item \textbf{Matplotlib, Plotly, Jupyter} --- анализ и визуализация.
-		\item \textbf{Docker} --- воспроизводимая среда.
-	\end{itemize}
+	\frametitle{Архитектура решения}
+
+	\begin{center}
+		\begin{tikzpicture}[
+			node distance=0.32cm,
+			block/.style={rectangle, draw, rounded corners, align=center,
+				minimum height=1.25cm, minimum width=2.45cm, fill=blue!10, font=\small},
+			container/.style={rectangle, draw=black!55, rounded corners,
+				inner xsep=0.28cm, inner ysep=0.75cm, fill=gray!6},
+			lib/.style={font=\scriptsize\itshape\color{black!70}},
+			arr/.style={-latex, thick}
+		]
+			\node[block] (cfg) {Конфигурация\\эксперимента\\\techlib{JSON, tqdm}};
+			\node[block, right=of cfg] (data) {Данные\\Boreas-RT\\\techlib{pyboreas}};
+			\node[block, right=of data] (pre) {Облако точек\\и препятствие\\\techlib{NumPy}};
+			\node[block, right=of pre] (vox) {Двойная\\вокселизация\\\techlib{NumPy}};
+			\node[block, below=0.75cm of cfg] (kal) {Фильтр\\Калмана\\\techlib{NumPy}};
+			\node[block, right=of kal] (icp) {Взвешенный\\ICP\\\techlib{cKDTree, align\_vectors}};
+			\node[block, right=of icp] (stat) {Метрики и\\статистика\\\techlib{pandas, ttest\_rel, zscore}};
+			\node[block, right=of stat] (vis) {Графики и\\ноутбуки\\\techlib{Matplotlib, Plotly, Jupyter}};
+
+			\draw[arr] (cfg) -- (data);
+			\draw[arr] (data) -- (pre);
+			\draw[arr] (pre) -- (vox);
+			\draw[arr] (vox.south) .. controls +(0,-0.65) and +(0,0.65) .. (icp.north);
+			\draw[arr] (icp.south) .. controls +(0,-0.65) and +(0,-0.65) .. (kal.south);
+			\draw[arr] (kal) -- (icp);
+			\draw[arr] (icp) -- (stat);
+			\draw[arr] (stat) -- (vis);
+			\begin{scope}[on background layer]
+				\node[container, fit=(cfg) (data) (pre) (vox) (icp) (kal) (stat) (vis)] (docker) {};
+			\end{scope}
+			\node[anchor=north west, font=\scriptsize\bfseries\color{black!70}]
+				at ([xshift=0.12cm,yshift=-0.12cm]docker.north west)
+				{Docker-образ: lidar-odometry-research, основан на python:3.12};
+		\end{tikzpicture}
+	\end{center}
+
+	\begin{center}\small
+		\textbf{Python} --- основной язык реализации; \textbf{Docker} --- воспроизводимая среда.
+	\end{center}
 \end{frame}
 
 
@@ -150,6 +180,12 @@
 		\qquad
 		\rho(e) = \frac{e^2/2}{\sigma_t/3 + e^2}.
 	\end{equation*}
+
+	\begin{itemize}
+		\fontsize{9pt}{11pt}\selectfont
+		\item $s \in P_t$, $q \in P_{t-1}$ --- соответствующие точки двух облаков.
+		\item $T \in SE(3)$ --- матрица евклидова преобразования $4\times4$, сочетающая поворот и перенос.
+	\end{itemize}
 
 	Веса, дающие устойчивость к выбросам:
 	\begin{equation*}
@@ -285,9 +321,9 @@
 			\hline
 			B (с фильтром Калмана)  & $-0.245$ & $0.273$ & $0.775$ & $0.332$ & $0.741$ & $0.409$ \\
 			\hline
-			Изменение, \% & {\color{red}$+22.7$} & {\color{green!50!black}$-8.5$} & {\color{green!50!black}$-70.4$} & {\color{green!50!black}$-17.6$} & {\color{green!50!black}$-11.3$} & {\color{green!50!black}$-15.5$} \\
+			Изменение, \% & {\color{green!50!black}$-22.7$} & {\color{green!50!black}$-8.5$} & {\color{green!50!black}$-70.4$} & {\color{green!50!black}$-17.6$} & {\color{green!50!black}$-11.3$} & {\color{green!50!black}$-15.5$} \\
 			\hline
-			p-value & {\color{red}$0.97$} & {\color{green!50!black}$0.020$} & {\color{green!50!black}$0.040$} & {\color{green!50!black}$0.030$} & {\color{green!50!black}$0.012$} & {\color{green!50!black}$0.024$} \\
+			p-value & {\color{green!50!black}$0.033$} & {\color{green!50!black}$0.020$} & {\color{green!50!black}$0.040$} & {\color{green!50!black}$0.030$} & {\color{green!50!black}$0.012$} & {\color{green!50!black}$0.024$} \\
 			\hline
 			\multicolumn{7}{|l|}{\textbf{$v_y$ --- поперечная линейная скорость}} \\
 			\hline
@@ -302,17 +338,8 @@
 		\end{tabular}
 	\end{center}
 	\begin{center}\fontsize{9pt}{11pt}\selectfont
-		Отрицательное изменение --- уменьшение метрики. Основной выигрыш --- по $v_x$.
+		Основной выигрыш достигается по продольной скорости $v_x$ и поперечной скорости $v_y$.
 	\end{center}
-\end{frame}
-
-
-\begin{frame}
-	\frametitle{Исходный код и текст диссертации}
-	\begin{center}
-		\includegraphics[height=6cm]{qr-git.pdf}
-	\end{center}
-	\begin{center}\small GitHub: исходный код, конфигурации экспериментов, текст работы.\end{center}
 \end{frame}
 
 
@@ -326,6 +353,15 @@
 		\item Воспроизводимый конвейер для сравнения конфигураций.
 		\item Применение: повышение надёжности локализации беспилотного автомобиля при обгоне грузовиком.
 	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Исходный код и текст диссертации}
+	\begin{center}
+		\includegraphics[height=6cm]{qr-git.pdf}
+	\end{center}
+	\begin{center}\small GitHub: исходный код, конфигурации экспериментов, текст работы.\end{center}
 \end{frame}
 
 \end{document}
