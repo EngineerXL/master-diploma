@@ -74,6 +74,7 @@ def plot_lidar_clouds_animation(
     alpha: float = 0.8,
     img_path : str | None = None,
     gif_path: str | None = None,
+    plot_2d_projection: bool = True,
 ):
     frames = []
     for i, points in enumerate(input_clouds):
@@ -105,7 +106,10 @@ def plot_lidar_clouds_animation(
         fig.suptitle(f"{title} - Frame {i+1}")
 
         # Create 3D scatter plot using matplotlib
-        ax3d = fig.add_subplot(1, 3, (1, 2), projection="3d")
+        if plot_2d_projection:
+            ax3d = fig.add_subplot(1, 3, (1, 2), projection="3d")
+        else:
+            ax3d = fig.add_subplot(1, 1, 1, projection="3d")
         ax3d.scatter(
             xs,
             ys,
@@ -135,31 +139,32 @@ def plot_lidar_clouds_animation(
         # Adjust view angle for better visualization
         ax3d.view_init(elev=30, azim=165)
 
-        # 2D Swap x and y
-        ax2d = fig.add_subplot(1, 3, 3)
-        ax2d.scatter(
-            ys,
-            xs,
-            c=zs,
-            vmin=v_low,
-            vmax=v_high,
-            cmap=cmap,
-            s=point_size_2d,
-            alpha=alpha,
-            marker="o",
-            linewidth=0,
-        )
+        # 2D Swap x and y (only if enabled)
+        if plot_2d_projection:
+            ax2d = fig.add_subplot(1, 3, 3)
+            ax2d.scatter(
+                ys,
+                xs,
+                c=zs,
+                vmin=v_low,
+                vmax=v_high,
+                cmap=cmap,
+                s=point_size_2d,
+                alpha=alpha,
+                marker="o",
+                linewidth=0,
+            )
 
-        # Set labels and title
-        ax2d.set_xlabel("Y (m)")
-        ax2d.set_ylabel("X (m)")
+            # Set labels and title
+            ax2d.set_xlabel("Y (m)")
+            ax2d.set_ylabel("X (m)")
 
-        # Set aspect ratio
-        ax2d.set_aspect("equal")
+            # Set aspect ratio
+            ax2d.set_aspect("equal")
 
-        ax2d.set_xlim(y_low, y_high)
-        ax2d.set_ylim(x_low, x_high)
-        ax2d.invert_xaxis()
+            ax2d.set_xlim(y_low, y_high)
+            ax2d.set_ylim(x_low, x_high)
+            ax2d.invert_xaxis()
 
         # Convert the figure to a PIL Image using BytesIO
         buf = io.BytesIO()
