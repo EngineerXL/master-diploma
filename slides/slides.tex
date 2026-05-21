@@ -31,12 +31,33 @@
 
 \section{Актуальность}
 \begin{frame}
+	\frametitle{Актуальность: беспилотная отрасль}
+	\begin{columns}
+		\column{0.40\textwidth}
+		\begin{itemize}
+			\fontsize{10pt}{12pt}\selectfont
+			\item Автономный транспорт уже на дорогах.
+			\item Waymo: роботакси в городе.
+			\item Яндекс: автономные авто и доставка.
+			\item Ключевая задача --- надёжная локализация.
+		\end{itemize}
+		\column{0.52\textwidth}
+		\begin{center}
+			\small Waymo\\[0.08em]
+			\includegraphics[height=2.55cm, width=0.92\textwidth, keepaspectratio]{waymo-jaguar.jpeg}\\[0.35em]
+			\small Яндекс\\[0.08em]
+			\includegraphics[height=2.55cm, width=0.92\textwidth, keepaspectratio]{business-robot-pizza.jpg}
+		\end{center}
+	\end{columns}
+\end{frame}
+
+
+\begin{frame}
 	\frametitle{Актуальность}
 	\begin{columns}
 		\column{0.35\textwidth}
 		\begin{itemize}
 			\fontsize{10pt}{12pt}\selectfont
-			\item Беспилотный транспорт: Waymo, Яндекс.
 			\item GNSS работает нестабильно.
 			\item Лидар --- основной источник геометрии.
 			\item Грузовик в соседней полосе перекрывает поле зрения и разрушает оценку движения.
@@ -207,6 +228,22 @@
 		$Q_v = 0.01$, $R_v = 0.09$, $Q_\omega = 0.01$, $R_\omega = 9\cdot10^{-6}$.
 	\end{center}
 
+	\textbf{Оценки шумов:}
+	\vspace{-0.4em}
+	\begin{columns}[T]
+		\column{0.47\textwidth}
+		\begin{itemize}
+			\item Ускорение автомобиля: 1 м/с$^2$.
+			\item Частота лидара: 10 Гц.
+		\end{itemize}
+		\column{0.47\textwidth}
+		\begin{itemize}
+			\item Точность лидара: 3 см.
+			\item Дальность точки: 100 м.
+		\end{itemize}
+	\end{columns}
+
+	\vfill
 	Главная роль: стабилизация начального приближения ICP на следующем кадре.
 \end{frame}
 
@@ -220,15 +257,15 @@
 	\end{itemize}
 	\begin{center}
 		\begin{minipage}{0.32\textwidth}
-			\centering\small Tunnel\\
+			\centering\small Тоннель\\
 			\includegraphics[width=\textwidth]{rides/tunnel_truck_overtake_frame.png}
 		\end{minipage}
 		\begin{minipage}{0.32\textwidth}
-			\centering\small Skyway\\
+			\centering\small Трасса\\
 			\includegraphics[width=\textwidth]{rides/skyway_truck_overtake_frame.png}
 		\end{minipage}
 		\begin{minipage}{0.32\textwidth}
-			\centering\small Industrial\\
+			\centering\small Промзона\\
 			\includegraphics[width=\textwidth]{rides/industrial_truck_overtake_frame.png}
 		\end{minipage}
 	\end{center}
@@ -239,12 +276,12 @@
 	\frametitle{Данные: Boreas-RT (продолжение)}
 	\begin{center}
 		\begin{minipage}{0.45\textwidth}
-			\centering\small Farm\\
+			\centering\small Сельская местность\\
 			\includegraphics[width=\textwidth]{rides/farm_truck_overtake_frame.png}
 		\end{minipage}
 		\hspace{0.02\textwidth}
 		\begin{minipage}{0.45\textwidth}
-			\centering\small Suburbs\\
+			\centering\small Пригород\\
 			\includegraphics[width=\textwidth]{rides/suburbs_truck_overtake_frame.png}
 		\end{minipage}
 	\end{center}
@@ -307,7 +344,7 @@
 
 
 \begin{frame}
-	\frametitle{Статистика по 725 сценам (T-критерий Стьюдента, $\alpha=0.05$)}
+	\frametitle{Статистика по 725 сценам}
 	\begin{center}
 		\fontsize{9pt}{11pt}\selectfont
 		\setlength{\tabcolsep}{4pt}
@@ -338,6 +375,7 @@
 		\end{tabular}
 	\end{center}
 	\begin{center}\fontsize{9pt}{11pt}\selectfont
+		Значимость проверялась парным T-критерием Стьюдента при $\alpha=0.05$.\\
 		Основной выигрыш достигается по продольной скорости $v_x$ и поперечной скорости $v_y$.
 	\end{center}
 \end{frame}
