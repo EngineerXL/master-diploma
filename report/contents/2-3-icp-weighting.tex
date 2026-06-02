@@ -19,7 +19,7 @@
 
 В программной реализации эти два шага выполняются последовательно в методе обработки кадра, как показано на рисунке~\ref{lst:icp-double-voxelization}. Сначала строится облако \texttt{points\_merge}, затем --- ещё более компактное облако \texttt{points\_reduced}. Идея полностью соответствует KISS-ICP, однако в данной работе второе облако используется для регистрации соседних кадров, а не для регистрации кадра с локальной картой.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=91,lastline=105,language=Python]{../src/lidar_odometry/actor.py}
   \caption{Двойная вокселизация облака точек перед регистрацией}
@@ -36,7 +36,7 @@
 \end{equation}
 В коде это соответствует построению объекта преобразования через экспоненциальные координаты с помощью функции SciPy~\cite{scipy-rigidtransform-from-exp-coords}; соответствующий фрагмент приведён на рисунке~\ref{lst:icp-initial-guess}. После этого текущее облако точек предварительно переносится в глобальную систему координат с учётом предыдущей позы и прогноза движения.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=107,lastline=110,language=Python]{../src/lidar_odometry/actor.py}
   \caption{Построение начального приближения по предыдущей оценке движения}
@@ -64,7 +64,7 @@
 
 В коде эта величина вычисляется в методе, показанном на рисунке~\ref{lst:icp-deviation}. Поступательная часть определяется как норма вектора переноса, а вращательная --- через угол поворота и максимальную дальность точки. Далее эти значения накапливаются по уже обработанным кадрам и используются для оценки текущего масштаба отклонений.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=173,lastline=194,language=Python]{../src/lidar_odometry/actor.py}
   \caption{Оценка отклонения от модели движения и вычисление адаптивного порога}
@@ -93,7 +93,7 @@
 \end{equation}
 Только пары, удовлетворяющие этому условию, участвуют в дальнейшей оценке преобразования. Соответствующий фрагмент кода приведён на рисунке~\ref{lst:icp-correspondences}.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=67,lastline=77,language=Python]{../src/lidar_odometry/icp.py}
   \caption{Поиск ближайших соответствий и отсечение по адаптивному порогу}
@@ -118,7 +118,7 @@
 \end{equation}
 Именно эта формула реализована в функции \texttt{geman\_mcclure\_weights}, показанной на рисунке~\ref{lst:icp-geman-mcclure}. Чем больше расстояние между соответствующими точками, тем меньше вес этой пары и тем слабее её влияние на итоговую оценку преобразования.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=17,lastline=19,language=Python]{../src/lidar_odometry/icp.py}
   \caption{Вычисление весов по функции Гемана---Макклюра}
@@ -127,7 +127,7 @@
 
 После вычисления весов оценка преобразования между парами точек с учётом весов выполняется взвешенным вариантом алгоритма Кабша~\cite{kabsch-wikipedia,kabsch-nghiaho}. В коде для этого используется функция \texttt{Rotation.align\_vectors} из SciPy~\cite{scipy-align-vectors}, а затем по найденному вращению восстанавливается вектор переноса. Соответствующий фрагмент приведён на рисунке~\ref{lst:icp-kabsch}. Таким образом, задача минимизации и способ коррекции облака точек остаются теми же, что и в KISS-ICP: на каждой итерации вычисляется очередная поправка преобразования, после чего текущее облако дополнительно совмещается с опорным.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=35,lastline=47,language=Python]{../src/lidar_odometry/icp.py}
   \caption{Оценка преобразования между парами точек с учётом весов}
@@ -152,7 +152,7 @@
 
 По своей математической структуре алгоритм сохраняет основные идеи KISS-ICP --- двойную вокселизацию, адаптивный порог, начальное приближение по предыдущему движению и point-to-point регистрацию, --- но в данной работе адаптирован к схеме регистрации соседних облаков точек без использования локальной карты внутри ICP. При этом качество регистрации существенно зависит от начального приближения, формируемого по предыдущей оценке движения; поэтому далее рассматривается модель постоянной скорости и сглаживание оценок скоростей.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=110,lastline=142,language=Python]{../src/lidar_odometry/icp.py}
   \caption{Основной цикл взвешенного ICP}

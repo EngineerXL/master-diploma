@@ -6,7 +6,7 @@
 
 В данной работе используется devkit pyboreas~\cite{pyboreas}, через который для каждого лидарного кадра доступны облако точек, временная метка, поза и данные о скорости. В собственной реализации загрузка последовательностей выполняется через класс \texttt{BoreasDataset}, а доступ к отдельным кадрам --- через обёртку \texttt{LidarOdometryWrapper}; соответствующий фрагмент кода приведён на рисунке~\ref{lst:boreas-wrapper-init}.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=47,lastline=52,language=Python]{../src/dataset/utils.py}
   \caption{Инициализация загрузчика последовательности Boreas-RT}
@@ -15,7 +15,7 @@
 
 Из кадра извлекаются временная метка, облако точек и вектор скоростей в системе сенсора, как показано на рисунке~\ref{lst:boreas-get-frame}. Таким образом, облака точек используются как входные данные алгоритма, а линейные и угловые скорости --- как эталонные значения при последующем сравнении.
 
-\begin{figure}[h]
+\begin{figure}
   \fontsize{12pt}{14pt}\selectfont
   \lstinputlisting[firstline=91,lastline=97,language=Python]{../src/dataset/utils.py}
   \caption{Получение лидарного облака по номеру кадра}
@@ -26,7 +26,7 @@
 
 Используемые в работе 10 проездов распределяются по типам маршрутов, как показано в таблице~\ref{tab:boreas-rt-routes}. Именно этот набор проездов используется для проведения эксперимента.
 
-\begin{table}[h]
+\begin{table}
 \centering
 \caption{Используемые тестовые проезды Boreas-RT}
 \label{tab:boreas-rt-routes}
