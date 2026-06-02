@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from src.dataset.pipeline import DATA_OUTPUT_ROOT
 from scipy.stats import ttest_rel, zscore
 
-
 VELOCITIES_FIELDS = ["vx", "vy", "vz", "wx", "wy", "wz"]
 METRICS_NAMES = ["mean", "std", "MSE", "MAE", "q95_abs", "RMSE"]
 
@@ -253,6 +252,121 @@ class PostprocessingWrapper:
             ax.set_ylabel("Velocity (m/s)" if col == 0 else "Angular Velocity (rad/s)")
             ax.legend(loc="best")
             ax.grid(True, alpha=0.3)
+
+        # Adjust layout to prevent overlap
+        plt.tight_layout()
+
+        if save_path:
+            fig.savefig(save_path, dpi=300, bbox_inches="tight")
+            print(f"Figure saved to {save_path}")
+
+        return fig
+
+    def plot_velocity_innovations(
+        self,
+        ride_segment_id: int | None = None,
+        frame_st: Optional[int] = None,
+        frame_en: Optional[int] = None,
+        figsize: tuple = (14, 10),
+        height: int = 3,
+        width: int = 2,
+        save_path: Optional[str] = None,
+        compare_against=None,
+    ):
+        """
+        Plot innovation (absolute error) graphs for every velocity component.
+
+        Innovation is defined as abs(predicted - gt), i.e., the absolute error.
+
+        Parameters:
+        ----------
+        ride_segment_id : int or None
+            Ride segment ID to process. If None, processes all segments.
+        frame_st : int or None
+            Start frame index. If None, starts from 0.
+        frame_en : int or None
+            End frame index. If None, ends at the last frame.
+        figsize : tuple
+            Figure size (width, height).
+        height : int
+            Number of rows in subplot grid.
+        width : int
+            Number of columns in subplot grid.
+        save_path : str or None
+            Path to save the figure. If None, figure is not saved.
+        compare_against : PostprocessingWrapper or None
+            Optional second wrapper to compare against. If provided, plots
+            innovation for both estimators on the same graph.
+
+        Returns:
+        --------
+        matplotlib.figure.Figure
+            The created figure object.
+        """
+        # Get errors (estimated - ground truth)
+        errors = self.get_velocity_errors(ride_segment_id)
+
+        # Calculate innovation (absolute error)
+        innovations = {field: np.abs(errors[field]) for field in VELOCITIES_FIELDS}
+
+        # Create figure with 2 columns (linear and angular velocities) and 3 rows
+        fig, axes = plt.subplots(height, width, figsize=figsize)
+
+        for i, field in enumerate(VELOCITIES_FIELDS):
+            col = i // height
+            row = i % height
+            ax = axes[row, col]
+
+            # Get data for this velocity component
+            data = self.get_velocity_data(ride_segment_id)
+
+            if frame_st is None:
+                frame_st = 0
+            if frame_en is None:
+                frame_en = len(data["timestamp"])
+
+            t = np.array(data["timestamp"][frame_st:frame_en]) - data["timestamp"][0]
+
+            # Plot innovation (absolute error)
+            ax.plot(
+                t,
+                innovations[field][frame_st:frame_en],
+                "b-",
+                linewidth=1.5,
+                label="innovation",
+            )
+
+            if compare_against is not None:
+                # Calculate innovation for the second estimator
+                est_errors = compare_against.get_velocity_errors(ride_segment_id)
+                compare_innovations = {
+                    f: np.abs(est_errors[f]) for f in VELOCITIES_FIELDS
+                }
+                ax.plot(
+                    t,
+                    compare_innovations[field][frame_st:frame_en],
+                    "g-",
+                    linewidth=1.5,
+                    label="innovation B",
+                )
+
+            # Add zero line for reference
+            ax.axhline(y=0, color="gray", linestyle="--", linewidth=0.5)
+
+            # Set title and labels
+            plot_name = (
+                "Linear Velocity Innovation"
+                if col == 0
+                else "Angular Velocity Innovation"
+            )
+            ax.set_title(f"{plot_name} ({field})")
+            ax.set_xlabel("Time (s)")
+            ax.set_ylabel("Innovation (m/s)" if col == 0 else "Innovation (rad/s)")
+            ax.legend(loc="best")
+            ax.grid(True, alpha=0.3)
+
+            # Set y-axis to start from 0 for better visualization
+            ax.set_ylim(bottom=0)
 
         # Adjust layout to prevent overlap
         plt.tight_layout()
