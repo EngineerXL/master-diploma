@@ -326,6 +326,24 @@
 
 
 \begin{frame}
+	\frametitle{Сцена 341 (Tunnel): графики невязок}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{center}
+			\fontsize{8pt}{9pt}\selectfont Без фильтра Калмана\\
+			\includegraphics[width=\textwidth]{plots/341_innovation_no_kalman.png}
+		\end{center}
+		\column{0.5\textwidth}
+		\begin{center}
+			\fontsize{8pt}{9pt}\selectfont С фильтром Калмана\\
+			\includegraphics[width=\textwidth]{plots/341_innovation.png}
+		\end{center}
+	\end{columns}
+	\begin{center}\small Корректная оценка сохраняется на всех 10 секундах.\end{center}
+\end{frame}
+
+
+\begin{frame}
 	\frametitle{Сцена 65 (Tunnel): удержание $v_x$ от провала к нулю}
 	\begin{columns}
 		\column{0.5\textwidth}
@@ -337,6 +355,24 @@
 		\begin{center}
 			\fontsize{8pt}{9pt}\selectfont С фильтром Калмана\\
 			\includegraphics[width=\textwidth]{plots/65.png}
+		\end{center}
+	\end{columns}
+	\begin{center}\small Фильтр Калмана удерживает $v_x$ около 6 секунд и устраняет смещение $v_z$.\end{center}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Сцена 65 (Tunnel): графики невязок}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{center}
+			\fontsize{8pt}{9pt}\selectfont Без фильтра Калмана\\
+			\includegraphics[width=\textwidth]{plots/65_innovation_no_kalman.png}
+		\end{center}
+		\column{0.5\textwidth}
+		\begin{center}
+			\fontsize{8pt}{9pt}\selectfont С фильтром Калмана\\
+			\includegraphics[width=\textwidth]{plots/65_innovation.png}
 		\end{center}
 	\end{columns}
 	\begin{center}\small Фильтр Калмана удерживает $v_x$ около 6 секунд и устраняет смещение $v_z$.\end{center}
