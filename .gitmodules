@@ -4,3 +4,6 @@
 [submodule "slides/diploma-slides-latex-template"]
 	path = slides/diploma-slides-latex-template
 	url = https://github.com/iktovr/diploma-slides-latex-template.git
+[submodule "extra"]
+	path = extra
+	url = https://github.com/EngineerXL/master-diploma-extra.git
